@@ -1,0 +1,12 @@
+{
+  "name": "paydaybanksystem",
+  "version": "1.0.0",
+  "description": "banksystem project",
+  "license": "ISC",
+  "author": "Artem Dmysh",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
