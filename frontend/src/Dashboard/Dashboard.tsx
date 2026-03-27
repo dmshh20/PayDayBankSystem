@@ -1,11 +1,34 @@
-import React from 'react'
 import './Dashboard.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import { faDollar } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { Line } from 'react-chartjs-2'
+import revenue from '../data/revenue.json'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+)
 
 const Dashboard = () => {
+
+
   return (
     <section className='dashboard'>
         <h1 className='myCard'>My Card</h1>
@@ -30,7 +53,6 @@ const Dashboard = () => {
                         <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>10.680</p>
                        <FontAwesomeIcon icon={faAngleDown} className='faAngleDown'/>
                       </div>
-                       
                     </div>
                 </div>
 
@@ -40,8 +62,8 @@ const Dashboard = () => {
                     <p className='amountDesc'>Enter the amount</p>
                   </div>
                   <div className='enterTheAmountInInput'>
-                        <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollarInput'/></p>
-                   <input type="number" className='amountOfTransfer'/>
+                    <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollarInput'/></p>
+                    <input type="number" className='amountOfTransfer'/>
                   </div>
                 </div>
 
@@ -57,8 +79,23 @@ const Dashboard = () => {
                   <button className='sendMoneyButton'>Send Money</button>
                 </div>
             </div>
+            <div className='chart'>
+              <Line
+                id="revenue-chart"
+                data={{
+                  labels: revenue.map((item) => item.label),
+                  datasets: [
+                    {
+                      label: 'Revenue',
+                      data: revenue.map((item) => item.revenue),
+                      borderColor: 'rgb(75, 192, 192)',
+                      backgroundColor: "#064FF0"
+                    }
+                  ]
+                }}
+              />
+            </div>
         </div>
-
     </section>
   )
 }

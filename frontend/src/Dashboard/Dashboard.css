@@ -136,3 +136,10 @@
     color: white;
     font-weight: 500;
 }
+.dashboardSection {
+    display: flex;
+}
+.chart {
+    width: 500px;
+    height: 500px;
+}
