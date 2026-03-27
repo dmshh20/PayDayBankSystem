@@ -1,0 +1,51 @@
+.sidebar {
+    position: absolute;
+    width: 280px;
+    height: 100vh;
+    background-color: #f2f2f2;
+    top: -1px;
+    border-right: 1px solid lightgray;
+}
+.aboutBank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 20px;
+}
+.aboutBank h1 {
+    font-size: 30px;
+}
+.bahaiIcon {
+    font-size: 30px;
+    color: #0177fb;
+}
+.optionsList {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 50px;
+    margin-top: 30px;
+    gap: 20px;
+}
+.option {
+   list-style: none;
+   text-decoration: none;
+   color: black;
+}
+/* icons */
+.optionIcon {
+    font-size: 20px;
+   color: rgb(155, 152, 152);
+   margin-right: 5px;
+
+}
+/*  */
+.offtop {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 50px;
+    margin-top: 530px;
+    gap: 20px;
+}
