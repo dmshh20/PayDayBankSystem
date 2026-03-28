@@ -3,6 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import { faDollar } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+
 import { Line } from 'react-chartjs-2'
 import revenue from '../data/revenue.json'
 import {
@@ -79,7 +83,12 @@ const Dashboard = () => {
                   <button className='sendMoneyButton'>Send Money</button>
                 </div>
             </div>
+            <div className='theOutsideSecondBlock'>
+
+            <div className='theSecondBlock'>
+              
             <div className='chart'>
+              <h1>Money Flow</h1>
               <Line
                 id="revenue-chart"
                 data={{
@@ -95,6 +104,46 @@ const Dashboard = () => {
                 }}
               />
             </div>
+            
+            <div className='recentContacts'>
+              <div className='recentContactsInfo'>
+                <div className='searchRecentContacts'>
+                  <h1>Recent Contacts</h1>
+                  <FontAwesomeIcon icon={faMagnifyingGlass} className='mangifyingGlass'/>
+                </div>
+                <p>19 recipients</p>  
+              </div>
+              <div className='recentContactsFullList'>
+                <ul className='recentContactsCurrentList'>
+                  <li className='currentRecentContact'><FontAwesomeIcon icon={faUser} className='faUser' /></li>
+                  <li className='currentRecentContact'><FontAwesomeIcon icon={faUser} className='faUser' /></li>
+                  <li className='currentRecentContact'><FontAwesomeIcon icon={faUser} className='faUser' /></li>
+                  <li className='currentRecentContact'><FontAwesomeIcon icon={faUser} className='faUser' /></li>
+                  <li className='currentRecentContact'><FontAwesomeIcon icon={faUser} className='faUser' /></li>
+
+                  <li className='currentRecentContact'><FontAwesomeIcon icon={faAngleRight} className='faArrowRight'/></li>
+                
+                </ul>
+              </div>
+            </div>
+
+            </div>
+                <div className='recentTransactionsBlock'>
+                  <div className='recentTransactionsInfo'>
+                    <h1>Recent Transactions</h1>
+                    <div className='checkAllTransactions'>
+
+                      <p>View All</p>
+                      <li style={{listStyle: 'none'}}><FontAwesomeIcon icon={faAngleRight} className='faArrowRight'/></li>
+
+                    </div>
+
+                  </div>
+                </div>
+           
+            </div>
+
+
         </div>
     </section>
   )

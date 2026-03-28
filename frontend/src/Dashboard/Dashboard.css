@@ -142,4 +142,88 @@
 .chart {
     width: 500px;
     height: 500px;
+    margin-left: 20px;
+}
+.chart h1 {
+    margin-left: 20px;
+    font-size: 25px;
+}
+.recentContacts {
+    margin-left: 40px;
+}
+.recentContactsInfo p {
+    color: gray;
+    font-weight: 700;
+}
+.recentContactsInfo h1 {
+    font-size: 25px;
+}
+.mangifyingGlass {
+    font-size: 20px;
+    color: #0177fb;
+}
+.searchRecentContacts {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.recentContactsCurrentList {
+    display: flex;
+    align-items: center;
+}
+.currentRecentContact {
+    list-style-type: none;
+}
+.faUser {
+    font-size: 22px;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+.faArrowRight {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-left: 30px;
+    color: lightgray;
+    cursor: pointer;
+}
+.recentContactsUserAccount {
+    background-color: lightblue;
+    border-radius: 50%;
+    padding: 5px;
+}
+.theSecondBlock {
+    display: flex;
+}
+.recentTransactionsBlock {
+    position: absolute;
+    top: 420px;
+    margin-left: 30px;
+}
+.recentTransactionsInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+}
+.recentTransactionsInfo h1 {
+    font-size: 25px;
+    margin-right: 360px;
+}
+.checkAllTransactions {
+    display: flex;
+    align-items: center;
+    margin-top: -23px;
+}
+.checkAllTransactions li {
+    position: absolute;
+    margin-left: 60px;
+    font-weight: 800;
+}
+.checkAllTransactions p {
+    font-size: 20px;
+    margin-top: 20px;
+    font-weight: 700;
+    color: gray;
+
 }
