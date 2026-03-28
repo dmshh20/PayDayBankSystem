@@ -1,0 +1,252 @@
+.dashboard {
+    height: 100vh;
+    width: 1200px;
+    background-color: #f2f2f2;
+    margin-left: 280px;
+}
+.dashboardSection {
+    margin-left: 30px;
+    margin-top: 10px;
+}
+.myCard {
+     margin-left: 30px;
+     padding-top: 22px;
+     /* margin-top: 55px; */
+}
+.userCard {
+    color: #f2f2f2;
+    width: 260px;
+    height: 140px;
+    background-color: #0177fb;
+    border-radius: 20px;
+    padding: 20px;
+}
+.userCardName p {
+    font-size: 14px;
+}
+.userCardName h4 {
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+    margin-bottom: 30px;
+}
+.cardType {
+    width: 260px;
+    height: 60px;
+    background-color: white;
+    margin-top: 20px;
+    border-radius: 20px;
+}
+.cardInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cardType {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 35px;
+}
+.currentSumOfTheCurrentBank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.faAngleDown {
+    cursor: pointer;
+}
+.sumOfTheCurrentCard {
+   
+   font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+.faDollar {
+    color: grey;
+}
+.transfer h1 {
+    margin-top: 15px;
+    font-weight: 400;
+}
+.enterTheAmount {
+    margin-top: 20px;
+    width: 260px;
+    height: 80px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px;
+}
+.amountDesc {
+    font-size: 13px;
+    color: gray;
+}
+.amountOfTransfer {
+    outline: none;
+    border: none;
+}
+.enterTheAmountInInput {
+    display: flex;
+}
+.amountOfTransfer {
+    font-size: 23px;
+    width: 200px;
+}
+.faDollarInput {
+    font-size: 25px;
+    color: gray;
+}
+.recipient {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+.recipientInfo {
+    display: flex;
+    gap: 15px;
+}
+.addRecipient {
+    cursor: pointer;
+    background-color: lightblue;
+    padding: 5px;
+    border-radius: 50%;
+    font-size: 13px;
+    margin-left: 10px;
+    color: #0177fb;
+}
+.sendMoneyButton {
+    width: 260px;
+    height: 60px;
+    background-color: #0177fb;
+    border-radius: 30px;
+    margin-top: 20px;
+    font-size: 16px;
+    text-align: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: white;
+    font-weight: 500;
+}
+.dashboardSection {
+    display: flex;
+}
+.chart {
+    width: 500px;
+    height: 500px;
+    margin-left: 20px;
+}
+.chart h1 {
+    margin-left: 20px;
+    font-size: 25px;
+}
+.recentContacts {
+    margin-left: 40px;
+}
+.recentContactsInfo p {
+    color: gray;
+    font-weight: 700;
+}
+.recentContactsInfo h1 {
+    font-size: 25px;
+}
+.mangifyingGlass {
+    font-size: 20px;
+    color: #0177fb;
+}
+.searchRecentContacts {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.recentContactsCurrentList {
+    display: flex;
+    align-items: center;
+}
+.currentRecentContact {
+    list-style-type: none;
+}
+.faUser {
+    font-size: 22px;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+.faArrowRight {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-left: 30px;
+    color: lightgray;
+    cursor: pointer;
+}
+.recentContactsUserAccount {
+    background-color: lightblue;
+    border-radius: 50%;
+    padding: 5px;
+}
+.theSecondBlock {
+    display: flex;
+}
+.recentTransactionsBlock {
+    position: absolute;
+    top: 420px;
+    margin-left: 30px;
+}
+.recentTransactionsInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+}
+.recentTransactionsInfo h1 {
+    font-size: 25px;
+    margin-right: 360px;
+}
+.checkAllTransactions {
+    display: flex;
+    align-items: center;
+    margin-top: -23px;
+}
+.checkAllTransactions li {
+    position: absolute;
+    margin-left: 60px;
+    font-weight: 800;
+}
+.checkAllTransactions p {
+    font-size: 20px;
+    margin-top: 20px;
+    font-weight: 700;
+    color: gray;
+}
+.myAccount {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.myAccount p {
+    font-weight: 500;
+}
+.personalUserPhoto {
+    width: 20px;
+    height: 20px;
+    background-color: black;
+}
+.personalUserInfo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: end;
+    margin-right: 50px;
+    margin-top: 30px;
+}
+.faBell {
+    font-size: 20px;;
+}
