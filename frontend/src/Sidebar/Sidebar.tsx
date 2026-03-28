@@ -7,7 +7,7 @@ import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 
 import './Sidebar.css'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 const Sidebar = () => {
   return (
@@ -21,15 +21,15 @@ const Sidebar = () => {
         <nav className='navOptions'>
             <ul className='optionsList'>
 
-                <Link to="/" className='option'><li className='option'><FontAwesomeIcon icon={faHouse} className='optionIcon'/> Dashboard</li></Link>
-                <Link to="/inbox" className='option'><li className='option'><FontAwesomeIcon icon={faEnvelope} className='optionIcon'/> Inbox</li></Link>
-                <Link to="/wallets" className='option'><li className='option'><FontAwesomeIcon icon={faWallet} className='optionIcon'/> My Wallets</li></Link>
+                <NavLink to="/" className={({isActive}) => isActive ? 'option active' : 'option'}><li className='option'><FontAwesomeIcon icon={faHouse} className='optionIcon'/> Dashboard</li></NavLink>
+                <NavLink to="/inbox" className={({isActive}) => isActive ? 'option active' : 'option'}><li className='option'><FontAwesomeIcon icon={faEnvelope} className='optionIcon'/> Inbox</li></NavLink>
+                <NavLink to="/wallets" className={({isActive}) => isActive ? 'option active' : 'option'}><li className='option'><FontAwesomeIcon icon={faWallet} className='optionIcon'/> My Wallets</li></NavLink>
             </ul>
         </nav>
         
         <footer className='offtop'>
-                <Link to="/help" className='option'><li className='option'><FontAwesomeIcon icon={faCircleQuestion} className='optionIcon'/>Get Help</li></Link>
-                <Link to="/settings" className='option'><li className='option'><FontAwesomeIcon icon={faGear} className='optionIcon'/>Setting</li></Link>
+                <NavLink to="/help" className={({isActive}) => isActive ? 'option active' : 'option'}><li className='option'><FontAwesomeIcon icon={faCircleQuestion} className='optionIcon'/>Get Help</li></NavLink>
+                <NavLink to="/settings" className={({isActive}) => isActive ? 'option active' : 'option'}><li className='option'><FontAwesomeIcon icon={faGear} className='optionIcon'/>Setting</li></NavLink>
             
         </footer>
     </section>

@@ -10,7 +10,7 @@
 }
 .myCard {
      margin-left: 30px;
-     padding-top: 62px;
+     padding-top: 22px;
      /* margin-top: 55px; */
 }
 .userCard {
@@ -225,5 +225,28 @@
     margin-top: 20px;
     font-weight: 700;
     color: gray;
-
+}
+.myAccount {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.myAccount p {
+    font-weight: 500;
+}
+.personalUserPhoto {
+    width: 20px;
+    height: 20px;
+    background-color: black;
+}
+.personalUserInfo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: end;
+    margin-right: 50px;
+    margin-top: 30px;
+}
+.faBell {
+    font-size: 20px;;
 }

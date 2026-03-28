@@ -6,6 +6,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import { faBell } from '@fortawesome/free-solid-svg-icons'
 
 import { Line } from 'react-chartjs-2'
 import revenue from '../data/revenue.json'
@@ -35,6 +36,15 @@ const Dashboard = () => {
 
   return (
     <section className='dashboard'>
+        <div className='personalUserInfo'>
+          <FontAwesomeIcon icon={faBell} className='faBell'/>
+            <div className='myAccount'>
+              {/* <p>Artem Dmysh</p> */}
+              {/* <img src="#" alt="" className='personalUserPhoto'/> */}
+              
+              <p style={{cursor: "pointer"}}>sign up</p>
+            </div>
+        </div>
         <h1 className='myCard'>My Card</h1>
         <div className='dashboardSection'>
             <div className='userInfo'>
