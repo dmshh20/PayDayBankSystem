@@ -20,6 +20,8 @@ import {
   Tooltip,
   Legend
 } from 'chart.js'
+import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 ChartJS.register(
   CategoryScale,
@@ -32,7 +34,15 @@ ChartJS.register(
 )
 
 const Dashboard = () => {
+  const [isOpen, setIsOpen] = useState(false)
+  console.log('current status', isOpen);
+    useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : 'unset'
+  }, [isOpen])
 
+  function closeModal() {
+    setIsOpen(false)
+  }
 
   return (
     <section className='dashboard'>
@@ -41,10 +51,17 @@ const Dashboard = () => {
             <div className='myAccount'>
               {/* <p>Artem Dmysh</p> */}
               {/* <img src="#" alt="" className='personalUserPhoto'/> */}
-              
-              <p style={{cursor: "pointer"}}>sign up</p>
+              <Link to='/signup' className='signUp'>
+                 <p className='signUp' onClick={() => setIsOpen(!isOpen)}>sign up</p>
+              </Link>
             </div>
         </div>
+        {/* {isOpen && <div className='overlay' onClick={() => setIsOpen(!isOpen)}></div>}
+        {isOpen && 
+          <SignUp isOpen={isOpen} isClose={closeModal}>
+            <div className='signUpForm'></div>
+          </SignUp>
+        } */}
         <h1 className='myCard'>My Card</h1>
         <div className='dashboardSection'>
             <div className='userInfo'>
