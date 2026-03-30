@@ -12,7 +12,7 @@ const SignUp = ()=> {
                 <div className='allSignUpFields'>
 
                 <div className='signUpField'>
-                    <label htmlFor="name">Name</label>
+                    <label htmlFor="name">Firstname</label>
                     <input id="name" type="text" />
                 </div>
                 <div className='signUpField'>
