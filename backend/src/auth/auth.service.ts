@@ -10,9 +10,7 @@ export class AuthService {
     constructor(
         private prisma: PrismaService,
         private readonly jwt: JwtService
-    ) {
-
-    }
+    ) {}
 
     async signUp(body: SignUpDto) {
         const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
@@ -21,17 +19,23 @@ export class AuthService {
             throw new BadRequestException('User has already exist')
         }
 
-        const hashPassword = await bcrypt.hash(body.password, 10)
- 
+        const hashedPassword = await this.hashPassword(body.password)
+
         const createUser = await this.prisma.user.create({
             data: {
                 firstName: body.firstName,
                 surName: body.surName,
                 email: body.email,
-                password: hashPassword
+                password: hashedPassword
             }
         })
         return createUser
+    }
+    
+    private async hashPassword(password: string) {
+        const sugar = 10
+        return await bcrypt.hash(password, sugar)
+
     }
 
     async signIn(body: SignInDto) {
