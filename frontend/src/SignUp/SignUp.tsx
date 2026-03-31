@@ -1,6 +1,7 @@
 import './SignUp.css'
 import { faBahai } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -17,13 +18,29 @@ const SignUp = ()=> {
         setValues({...values, [e.target.name]: e.target.value})
     }
 
-    const handleSubmit = (e: React.SubmitEvent) => {
+    const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault()
+        console.log('check res', values);
+
+        if (values.password !== values.confirmPassword) {
+            throw new Error('Password dont match')
+        }
+        try {
+            const response = await axios.post(import.meta.env.VITE_SIGNUP, values, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            
+            return response.data
+
+        } catch(error) {
+            console.log('error is here', error);
+            
+        }
     }
 
-    const signUp = () => {
-        console.log('res', values)
-    }
+   
 
   return (
     <>
@@ -55,7 +72,7 @@ const SignUp = ()=> {
                 </div>
 
                 <div className='aboutSignUp'>
-                    <button className='signUpBtn' onClick={signUp} >Sign Up</button>
+                    <button className='signUpBtn'>Sign Up</button>
                     <Link to="/signin" className='isAccount'><p>Have you already had an account?</p></Link>
                 </div>
             </form>

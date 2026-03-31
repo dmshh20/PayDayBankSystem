@@ -2,8 +2,14 @@ import { faBahai } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import './SignIn.css'
+import { useState } from 'react';
 
 const SignIn = ()=> {
+    const [values, setValues] = useState({
+        email: '',
+        password: ''
+    })
+    
   return (
     <>
     <section className='signInSection'>
@@ -11,7 +17,6 @@ const SignIn = ()=> {
         <div className='signInFullForm'>
             <form action="" className='signForm'>
                 <div className='allSignUpFields'>
-
               
                 <div className='signUpField'>
                     <label htmlFor="email">Email</label>
