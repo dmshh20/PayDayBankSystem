@@ -27,6 +27,11 @@ export class AuthService {
                 surName: body.surName,
                 email: body.email,
                 password: hashedPassword
+            }, select: {
+                firstName: true,
+                surName: true,
+                email: true,
+                createdAt: true
             }
         })
         return createUser
