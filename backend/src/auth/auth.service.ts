@@ -1,22 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SignUpDto } from './dto/SignUp.dto';
+import * as bcrypt from 'bcrypt';
+import { SignInDto } from './dto/SignIn.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    constructor(private prisma: PrismaService) {
+    constructor(
+        private prisma: PrismaService,
+        private readonly jwt: JwtService
+    ) {
 
     }
 
-    async signUp(body: any) {
+    async signUp(body: SignUpDto) {
+        const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
+
+        if (existingUser) {
+            throw new BadRequestException('User has already exist')
+        }
+
+        const hashPassword = await bcrypt.hash(body.password, 10)
+ 
         const createUser = await this.prisma.user.create({
             data: {
-                firstName: 'Artem',
-                surName: 'Dmysh',
-                email: 'ddssdfdsf@gmail.com',
-                password: '2101'
+                firstName: body.firstName,
+                surName: body.surName,
+                email: body.email,
+                password: hashPassword
             }
         })
         return createUser
+    }
+
+    async signIn(body: SignInDto) {
+        const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
+
+        if (!existingUser) {
+            throw new BadRequestException('User doesnt exist')
+        }
+
+        const isMatch = await bcrypt.compare(body.password, existingUser.password);
+
+        if (!isMatch) {
+            throw new BadRequestException('Passwords dont match')
+        }
+
+        const accessToken = this.jwt.sign({id: existingUser.id})
+        return {
+            access_token: accessToken
+        }
     }
 
 }
