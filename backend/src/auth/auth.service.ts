@@ -4,12 +4,14 @@ import { SignUpDto } from './dto/SignUp.dto';
 import * as bcrypt from 'bcrypt';
 import { SignInDto } from './dto/SignIn.dto';
 import { JwtService } from '@nestjs/jwt';
+import { EncryptService } from 'src/encrypt/encrypt.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private prisma: PrismaService,
-        private readonly jwt: JwtService
+        private readonly jwt: JwtService,
+        private readonly encryptService: EncryptService
     ) {}
 
     async signUp(body: SignUpDto) {
@@ -18,15 +20,18 @@ export class AuthService {
         if (existingUser) {
             throw new BadRequestException('User has already exist')
         }
-
+        
+        const generatedCard = await this.encryptService.generateCardNumber()
+        const hashedCard = await this.encryptService.encryptCardNumber(generatedCard)
+        
         const hashedPassword = await this.hashPassword(body.password)
-
         const createUser = await this.prisma.user.create({
             data: {
                 firstName: body.firstName,
                 surName: body.surName,
                 email: body.email,
-                password: hashedPassword
+                password: hashedPassword,
+                cardNumber: hashedCard
             }, select: {
                 firstName: true,
                 surName: true,
