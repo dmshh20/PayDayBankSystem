@@ -35,14 +35,10 @@ ChartJS.register(
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false)
-  console.log('current status', isOpen);
     useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'unset'
   }, [isOpen])
 
-  function closeModal() {
-    setIsOpen(false)
-  }
 
   return (
     <section className='dashboard'>

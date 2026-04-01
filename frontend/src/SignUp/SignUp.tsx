@@ -35,8 +35,7 @@ const SignUp = ()=> {
             return response.data
 
         } catch(error) {
-            console.log('error is here', error);
-            
+            throw new Error('Failed in Sign up')            
         }
     }
 
