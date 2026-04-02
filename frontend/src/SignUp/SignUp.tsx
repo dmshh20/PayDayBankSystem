@@ -3,9 +3,10 @@ import { faBahai } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const SignUp = ()=> {
+    const navigate = useNavigate()
     const [values, setValues] = useState({
         firstName: '',
         surName: '',
@@ -20,7 +21,6 @@ const SignUp = ()=> {
 
     const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault()
-        console.log('check res', values);
 
         if (values.password !== values.confirmPassword) {
             throw new Error('Password dont match')
@@ -32,7 +32,9 @@ const SignUp = ()=> {
                 }
             })
             
-            return response.data
+            if (response.data.email) {
+                navigate('/signin')
+            }
 
         } catch(error) {
             throw new Error('Failed in Sign up')            

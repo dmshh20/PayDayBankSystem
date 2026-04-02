@@ -60,7 +60,6 @@ export class AuthService {
         if (!isMatch) {
             throw new BadRequestException('Passwords dont match')
         }
-
         const accessToken = this.jwt.sign({id: existingUser.id})
         return {
             access_token: accessToken

@@ -7,7 +7,10 @@ import { ConfigModule } from '@nestjs/config';
 import { EncryptModule } from './encrypt/encrypt.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule, ConfigModule.forRoot(), EncryptModule],
+  imports: [AuthModule, PrismaModule, 
+    ConfigModule.forRoot({
+    isGlobal: true
+  }), EncryptModule],
   controllers: [AppController],
   providers: [AppService],
 })
