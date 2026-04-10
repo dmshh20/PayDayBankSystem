@@ -1,0 +1,33 @@
+.signInSection {
+    display: flex;
+    justify-content: center;
+    margin-top: 90px;
+    /* margin-right: 220px; */
+}
+.signInSection h1 {
+    display: flex;
+}
+.signInFullForm {
+    width: 450px;
+    height: 350px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    background-color: white;
+}
+.signForm {
+    margin-top: 100px;
+}
+.isAccount {
+    margin-bottom: 15px;
+}
+.handleError {
+    color: red;
+    text-decoration: none;
+    font-size: 14px;
+}
