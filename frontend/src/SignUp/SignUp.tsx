@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const SignUp = ()=> {
+    const [error, setError] = useState('')
     const navigate = useNavigate()
     const [values, setValues] = useState({
         firstName: '',
@@ -23,7 +24,7 @@ const SignUp = ()=> {
         e.preventDefault()
 
         if (values.password !== values.confirmPassword) {
-            throw new Error('Password dont match')
+            setError('Password dont match')
         }
         try {
             const response = await axios.post(import.meta.env.VITE_SIGNUP, values, {
@@ -36,7 +37,8 @@ const SignUp = ()=> {
                 navigate('/signin')
             }
 
-        } catch(error) {
+        } catch(error: any) {
+            setError(error.message)
             throw new Error('Failed in Sign up')            
         }
     }
@@ -75,6 +77,7 @@ const SignUp = ()=> {
                 <div className='aboutSignUp'>
                     <button className='signUpBtn'>Sign Up</button>
                     <Link to="/signin" className='isAccount'><p>Have you already had an account?</p></Link>
+                    <b className='handleError'>{error}</b>
                 </div>
             </form>
 

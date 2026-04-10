@@ -6,6 +6,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const SignIn = ()=> {
+    const [error, setError] = useState('')
     const navigate = useNavigate()
     const [values, setValues] = useState({
         email: '',
@@ -31,6 +32,7 @@ const SignIn = ()=> {
             }
             
         } catch(error) {
+            setError('Credentials incorrect')
             throw new Error('Failed in Sign in')
         }
     }
@@ -56,7 +58,8 @@ const SignIn = ()=> {
 
                 <div className='aboutSignUp'>
                     <button className='signUpBtn'>Sign In</button>
-                    <Link to="/signup" className='isAccount'><p>Haven't had an account yet?</p></Link>
+                    <Link to="/signup" ><p className='isAccount'>Haven't had an account yet?</p></Link>
+                    <b className='handleError'>{error}</b>
                 </div>
             </form>
         </div>

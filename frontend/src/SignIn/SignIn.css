@@ -22,5 +22,12 @@
 }
 .signForm {
     margin-top: 100px;
-
+}
+.isAccount {
+    margin-bottom: 15px;
+}
+.handleError {
+    color: red;
+    text-decoration: none;
+    font-size: 14px;
 }

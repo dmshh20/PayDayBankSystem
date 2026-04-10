@@ -90,3 +90,8 @@
 .isAccount {
     color: black;
 }
+.handleError {
+    color: red;
+    text-decoration: none;
+    font-size: 14px;
+}
