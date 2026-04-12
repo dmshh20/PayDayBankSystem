@@ -22,6 +22,7 @@ import {
 } from 'chart.js'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 ChartJS.register(
   CategoryScale,
@@ -34,30 +35,56 @@ ChartJS.register(
 )
 
 const Dashboard = () => {
+  const [userName, setUserName] = useState<[] | any>(null)
+  const token = localStorage.getItem('accessToken')
   const [isOpen, setIsOpen] = useState(false)
     useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'unset'
   }, [isOpen])
 
+  useEffect( () => {
+      return () => {
+        const recognizeUser = async () => {
+          await isAuthorized()
+        }
+        recognizeUser()
+      }
+  }, [])
+
+  const isAuthorized = async () => {
+    try {
+      const response = await axios.get(import.meta.env.VITE_ME, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'          
+        }
+      })
+      
+      setUserName(response.data)
+    } catch(error: any) {
+      console.log(error);
+      
+    }
+  }
 
   return (
     <section className='dashboard'>
         <div className='personalUserInfo'>
           <FontAwesomeIcon icon={faBell} className='faBell'/>
             <div className='myAccount'>
-              {/* <p>Artem Dmysh</p> */}
-              {/* <img src="#" alt="" className='personalUserPhoto'/> */}
+              {userName === null
+              ?
               <Link to='/signup' className='signUp'>
                  <p className='signUp' onClick={() => setIsOpen(!isOpen)}>sign up</p>
               </Link>
+              :
+              <p className='isAuthorized'>{userName?.firstName}</p>
+              }
+
+              <b className='userProfile'>exit</b>
             </div>
         </div>
-        {/* {isOpen && <div className='overlay' onClick={() => setIsOpen(!isOpen)}></div>}
-        {isOpen && 
-          <SignUp isOpen={isOpen} isClose={closeModal}>
-            <div className='signUpForm'></div>
-          </SignUp>
-        } */}
+       
         <h1 className='myCard'>My Card</h1>
         <div className='dashboardSection'>
             <div className='userInfo'>
@@ -73,7 +100,7 @@ const Dashboard = () => {
                     <h1>Send Money</h1>
                     <div className='cardType'>
                       <div className='cardInfo'>
-                        <img src="#" alt="" className='bankImage'/>
+                        <img src="#" alt="#" className='bankImage'/>
                         <p className='bankName'>Visa Card</p>
                       </div>
                       <div className='currentSumOfTheCurrentBank'>
@@ -85,7 +112,7 @@ const Dashboard = () => {
 
                 <div className='enterTheAmount'>
                   <div className='cardInfo'>
-                    <img src="#" alt="" className='bankImage'/>
+                    <img src="#" alt="#" className='bankImage'/>
                     <p className='amountDesc'>Enter the amount</p>
                   </div>
                   <div className='enterTheAmountInInput'>
@@ -96,7 +123,7 @@ const Dashboard = () => {
 
                 <div className='recipient'>
                   <div className='recipientInfo'>
-                    <img src="#" alt="w" />
+                    <img src="#" alt="#" />
                     <p className='recipientUserName'>Enter user card number</p>
                   </div>
                   <FontAwesomeIcon icon={faPlus} className='addRecipient' />
