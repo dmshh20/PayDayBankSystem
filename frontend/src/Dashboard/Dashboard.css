@@ -281,3 +281,37 @@
 .userProfile {
     cursor: pointer;
 }
+.exitBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+.exitButtons {
+    margin-top: 20px;
+    display: flex;
+    gap: 50px;
+}
+.exitButtons button {
+    width: 100px;
+    padding: 10px;
+}
+.stayButton {
+    background-color: green;
+    border: none;
+    color: white;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 12px;
+}
+.exitButton {
+    background-color: red;
+    border: none;
+    color: white;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 12px;
+}
+

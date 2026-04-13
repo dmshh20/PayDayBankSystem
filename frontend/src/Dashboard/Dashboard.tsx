@@ -20,9 +20,10 @@ import {
   Tooltip,
   Legend
 } from 'chart.js'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import ExitModel from '../Modals/ExitModal'
 
 ChartJS.register(
   CategoryScale,
@@ -35,9 +36,11 @@ ChartJS.register(
 )
 
 const Dashboard = () => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [userName, setUserName] = useState<[] | any>(null)
   const token = localStorage.getItem('accessToken')
   const [isOpen, setIsOpen] = useState(false)
+  
     useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'unset'
   }, [isOpen])
@@ -67,6 +70,14 @@ const Dashboard = () => {
     }
   }
 
+  const handleButtons = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleExit = () => {
+    localStorage.removeItem('accessToken')
+  }
+
   return (
     <section className='dashboard'>
         <div className='personalUserInfo'>
@@ -75,16 +86,28 @@ const Dashboard = () => {
               {userName === null
               ?
               <Link to='/signup' className='signUp'>
-                 <p className='signUp' onClick={() => setIsOpen(!isOpen)}>sign up</p>
+                 <p className='signUp' >sign up</p>
               </Link>
               :
               <p className='isAuthorized'>{userName?.firstName}</p>
               }
 
-              <b className='userProfile'>exit</b>
+              <b className='userProfile' onClick={handleButtons}>exit</b>
             </div>
         </div>
-       
+
+
+          {isModalOpen && <ExitModel setIsModalOpen={setIsModalOpen}> 
+            <div className='exitBlock'>
+              <h3>Do you really want to exit?</h3>
+              <div className='exitButtons'>
+                  <button onClick={() => setIsModalOpen(false)} className='stayButton'>Stay</button>
+                  <NavLink to='/signin' onClick={handleExit}>
+                     <button className='exitButton'>Exit</button>
+                  </NavLink>
+              </div>
+            </div> </ExitModel>}
+
         <h1 className='myCard'>My Card</h1>
         <div className='dashboardSection'>
             <div className='userInfo'>
