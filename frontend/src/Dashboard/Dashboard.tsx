@@ -39,11 +39,14 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [userName, setUserName] = useState<[] | any>(null)
   const token = localStorage.getItem('accessToken')
-  const [isOpen, setIsOpen] = useState(false)
-  
+
     useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : 'unset'
-  }, [isOpen])
+      document.body.style.overflow = 'hidden'
+
+      return () => {
+        document.body.style.overflow ? 'hidden' : 'unset'
+      }
+    }, [])
 
   useEffect( () => {
       return () => {
@@ -65,8 +68,7 @@ const Dashboard = () => {
       
       setUserName(response.data)
     } catch(error: any) {
-      console.log(error);
-      
+      throw new Error('Failed in getting user data')
     }
   }
 

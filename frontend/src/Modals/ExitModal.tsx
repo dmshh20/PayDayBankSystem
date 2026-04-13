@@ -1,4 +1,4 @@
-import { type Dispatch, type ReactNode, type SetStateAction } from 'react'
+import { useEffect, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
 import './ExitModal.css'
 
 interface ExitProps {
@@ -7,11 +7,21 @@ interface ExitProps {
 }
 
 
-const ExitModal = ({children, setIsModalOpen}: ExitProps) => {
+const ExitModal = ({children,setIsModalOpen}: ExitProps) => {
+
+  useEffect(() => {
+      document.body.style.overflow = 'hidden' 
+
+    return () => {
+      document.body.style.overflow ? 'hidden' : 'unset'
+    }
+  }, [])
+
+  
   return (
     <>
-      <div className='exitModal' >
-        <div className='exitModalScreen'>
+      <div className='exitModal' onClick={() => setIsModalOpen(false)}>
+        <div className='exitModalScreen' onClick={(e) => e.stopPropagation()}>
           {children}
         </div>
       </div>
