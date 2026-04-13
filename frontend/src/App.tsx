@@ -1,5 +1,4 @@
 import Dashboard from './Dashboard/Dashboard'
-import Sidebar from './Sidebar/Sidebar'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './Layout/Layout'
 import SignUp from './SignUp/SignUp'
