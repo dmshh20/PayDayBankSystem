@@ -5,10 +5,13 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { EncryptService } from 'src/encrypt/encrypt.service';
 import 'dotenv/config'
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategy/local.strategy';
 
 
 @Module({
   imports: [
+    // PassportModule.register({defaultStrategy: 'jwt'}),
      JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET as string,
@@ -17,7 +20,7 @@ import 'dotenv/config'
     PrismaModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, EncryptService],  
+  providers: [AuthService, EncryptService, JwtStrategy],  
 })
 
 export class AuthModule {}

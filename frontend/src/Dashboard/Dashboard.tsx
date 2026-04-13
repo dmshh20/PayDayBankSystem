@@ -20,8 +20,10 @@ import {
   Tooltip,
   Legend
 } from 'chart.js'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import axios from 'axios'
+import ExitModel from '../Modals/ExitModal'
 
 ChartJS.register(
   CategoryScale,
@@ -34,30 +36,80 @@ ChartJS.register(
 )
 
 const Dashboard = () => {
-  const [isOpen, setIsOpen] = useState(false)
-    useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : 'unset'
-  }, [isOpen])
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [userName, setUserName] = useState<[] | any>(null)
+  const token = localStorage.getItem('accessToken')
 
+    useEffect(() => {
+      document.body.style.overflow = 'hidden'
+
+      return () => {
+        document.body.style.overflow ? 'hidden' : 'unset'
+      }
+    }, [])
+
+  useEffect( () => {
+      return () => {
+        const recognizeUser = async () => {
+          await isAuthorized()
+        }
+        recognizeUser()
+      }
+  }, [])
+
+  const isAuthorized = async () => {
+    try {
+      const response = await axios.get(import.meta.env.VITE_ME, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'          
+        }
+      })
+      
+      setUserName(response.data)
+    } catch(error: any) {
+      throw new Error('Failed in getting user data')
+    }
+  }
+
+  const handleButtons = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleExit = () => {
+    localStorage.removeItem('accessToken')
+  }
 
   return (
     <section className='dashboard'>
         <div className='personalUserInfo'>
           <FontAwesomeIcon icon={faBell} className='faBell'/>
             <div className='myAccount'>
-              {/* <p>Artem Dmysh</p> */}
-              {/* <img src="#" alt="" className='personalUserPhoto'/> */}
+              {userName === null
+              ?
               <Link to='/signup' className='signUp'>
-                 <p className='signUp' onClick={() => setIsOpen(!isOpen)}>sign up</p>
+                 <p className='signUp' >sign up</p>
               </Link>
+              :
+              <p className='isAuthorized'>{userName?.firstName}</p>
+              }
+
+              <b className='userProfile' onClick={handleButtons}>exit</b>
             </div>
         </div>
-        {/* {isOpen && <div className='overlay' onClick={() => setIsOpen(!isOpen)}></div>}
-        {isOpen && 
-          <SignUp isOpen={isOpen} isClose={closeModal}>
-            <div className='signUpForm'></div>
-          </SignUp>
-        } */}
+
+
+          {isModalOpen && <ExitModel setIsModalOpen={setIsModalOpen}> 
+            <div className='exitBlock'>
+              <h3>Do you really want to exit?</h3>
+              <div className='exitButtons'>
+                  <button onClick={() => setIsModalOpen(false)} className='stayButton'>Stay</button>
+                  <NavLink to='/signin' onClick={handleExit}>
+                     <button className='exitButton'>Exit</button>
+                  </NavLink>
+              </div>
+            </div> </ExitModel>}
+
         <h1 className='myCard'>My Card</h1>
         <div className='dashboardSection'>
             <div className='userInfo'>
@@ -73,7 +125,7 @@ const Dashboard = () => {
                     <h1>Send Money</h1>
                     <div className='cardType'>
                       <div className='cardInfo'>
-                        <img src="#" alt="" className='bankImage'/>
+                        <img src="#" alt="#" className='bankImage'/>
                         <p className='bankName'>Visa Card</p>
                       </div>
                       <div className='currentSumOfTheCurrentBank'>
@@ -85,7 +137,7 @@ const Dashboard = () => {
 
                 <div className='enterTheAmount'>
                   <div className='cardInfo'>
-                    <img src="#" alt="" className='bankImage'/>
+                    <img src="#" alt="#" className='bankImage'/>
                     <p className='amountDesc'>Enter the amount</p>
                   </div>
                   <div className='enterTheAmountInInput'>
@@ -96,7 +148,7 @@ const Dashboard = () => {
 
                 <div className='recipient'>
                   <div className='recipientInfo'>
-                    <img src="#" alt="w" />
+                    <img src="#" alt="#" />
                     <p className='recipientUserName'>Enter user card number</p>
                   </div>
                   <FontAwesomeIcon icon={faPlus} className='addRecipient' />

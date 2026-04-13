@@ -66,4 +66,23 @@ export class AuthService {
         }
     }
 
+    async userMe(user: any) {
+        try {
+            const existingUser = await this.prisma.user.findUnique({where: {id: user.id}})
+            console.log('backend user info' , existingUser);
+            
+            if (!existingUser) {
+                throw Error('')
+            }
+           
+            const {password, cardNumber, ...clearnUser} = existingUser
+
+            console.log('here is the res', clearnUser);
+            return existingUser
+        } catch(error: any) {
+            console.log(error);
+            
+        }
+    }
+
 }
