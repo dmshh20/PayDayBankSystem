@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { createCipheriv, randomBytes, scrypt } from 'node:crypto';
 import { promisify } from 'node:util';
 import { randomInt } from 'node:crypto'
-
+import { createHmac } from 'node:crypto'
 
 @Injectable()
 export class EncryptService {
@@ -15,7 +15,7 @@ export class EncryptService {
         const encrypt = await this.encryption(iv, cardNumber)
 
         return `${iv.toString('hex')}:${encrypt.toString('base64')}`
-    }
+    }b
 
     private async encryption(iv: Buffer, cardNumber: string) {
             const key = (await promisify(scrypt)(this.password, this.salt, 32)) as Buffer;
@@ -37,5 +37,18 @@ export class EncryptService {
         }
          return myCardNumber
     }
+
+  async hashingBlindIndex() {
+    const pepper = process.env.HASHING_PEPPER as string
+    const combinedString = 'doublesecret' + pepper
+
+    const hash = createHmac('sha256', pepper)
+                .update(combinedString)
+                .digest('hex');
+
+    return hash
+  }
+  
+
       
 }
