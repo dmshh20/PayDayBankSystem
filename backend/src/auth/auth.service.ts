@@ -1,10 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { SignUpDto } from './dto/SignUp.dto';
 import * as bcrypt from 'bcrypt';
 import { SignInDto } from './dto/SignIn.dto';
 import { JwtService } from '@nestjs/jwt';
 import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { getUserDto } from './decorator/getUser.dto';
+import { Prisma } from 'generated/prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +17,8 @@ export class AuthService {
     ) {}
 
     async signUp(body: SignUpDto) {
-        const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
+       try {
+         const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
 
         if (existingUser) {
             throw new BadRequestException('User has already exist')
@@ -40,6 +43,15 @@ export class AuthService {
             }
         })
         return createUser
+
+       } catch(error: any) {
+         if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2002") {
+                throw new BadRequestException('User with this email already exist')
+            }
+        }
+        throw error 
+       }
     }
     
     private async hashPassword(password: string) {
@@ -49,7 +61,8 @@ export class AuthService {
     }
 
     async signIn(body: SignInDto) {
-        const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
+       try {
+         const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
 
         if (!existingUser) {
             throw new BadRequestException('User doesnt exist')
@@ -64,23 +77,29 @@ export class AuthService {
         return {
             access_token: accessToken
         }
+
+       } catch(error: any) {
+             if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === "P2001") {
+                    throw new BadRequestException('User doesnt exist')
+                }
+            }
+            throw error;
+       }
     }
 
-    async userMe(user: any) {
+    async userMe(user: getUserDto) {
         try {
             const existingUser = await this.prisma.user.findUnique({where: {id: user.id}})
-            console.log('backend user info' , existingUser);
-            
             if (!existingUser) {
                 throw Error('')
             }
            
             const {password, cardNumber, ...clearnUser} = existingUser
 
-            console.log('here is the res', clearnUser);
-            return existingUser
+            return clearnUser
         } catch(error: any) {
-            console.log(error);
+            throw new InternalServerErrorException('Failed get user information')
             
         }
     }

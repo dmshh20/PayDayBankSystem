@@ -6,12 +6,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { EncryptService } from 'src/encrypt/encrypt.service';
 import 'dotenv/config'
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './strategy/local.strategy';
+import { JwtStrategy } from './strategy/jwt.strategy';
 
 
 @Module({
   imports: [
-    // PassportModule.register({defaultStrategy: 'jwt'}),
      JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET as string,
