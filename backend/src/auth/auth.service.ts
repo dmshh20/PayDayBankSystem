@@ -34,7 +34,8 @@ export class AuthService {
                 surName: body.surName,
                 email: body.email,
                 password: hashedPassword,
-                cardNumber: hashedCard
+                cardNumber: hashedCard,
+                cardIndex: 'try'
             }, select: {
                 firstName: true,
                 surName: true,
