@@ -7,6 +7,7 @@ import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { getUserDto } from './decorator/getUser.dto';
 import { Prisma } from 'generated/prisma/client';
+import { log } from 'node:console';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
 
     async signUp(body: SignUpDto) {
        try {
+        
          const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
 
         if (existingUser) {
@@ -26,8 +28,8 @@ export class AuthService {
         
         const generatedCard = await this.encryptService.generateCardNumber()
         const hashedCard = await this.encryptService.encryptCardNumber(generatedCard)
-        
         const hashedPassword = await this.hashPassword(body.password)
+        
         const createUser = await this.prisma.user.create({
             data: {
                 firstName: body.firstName,
@@ -35,7 +37,7 @@ export class AuthService {
                 email: body.email,
                 password: hashedPassword,
                 cardNumber: hashedCard,
-                cardIndex: 'try'
+                cardIndex: hashedCard
             }, select: {
                 firstName: true,
                 surName: true,
@@ -46,6 +48,7 @@ export class AuthService {
         return createUser
 
        } catch(error: any) {
+        log('MY ERROR', error);
          if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2002") {
                 throw new BadRequestException('User with this email already exist')
