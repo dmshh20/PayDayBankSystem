@@ -38,17 +38,16 @@ export class EncryptService {
          return myCardNumber
     }
 
-  async hashingBlindIndex() {
+  async hashingBlindIndex(password: string) {
     const pepper = process.env.HASHING_PEPPER as string
-    const combinedString = 'doublesecret' + pepper
-
+    
+    const combinedString = password + pepper
+    
     const hash = createHmac('sha256', pepper)
                 .update(combinedString)
                 .digest('hex');
 
     return hash
   }
-  
-
       
 }

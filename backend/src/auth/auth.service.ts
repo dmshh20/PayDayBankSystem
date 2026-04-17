@@ -29,7 +29,8 @@ export class AuthService {
         const generatedCard = await this.encryptService.generateCardNumber()
         const hashedCard = await this.encryptService.encryptCardNumber(generatedCard)
         const hashedPassword = await this.hashPassword(body.password)
-        
+        const hashedBlindIndex = await this.encryptService.hashingBlindIndex(body.password)
+
         const createUser = await this.prisma.user.create({
             data: {
                 firstName: body.firstName,
@@ -37,7 +38,7 @@ export class AuthService {
                 email: body.email,
                 password: hashedPassword,
                 cardNumber: hashedCard,
-                cardIndex: hashedCard
+                cardIndex: hashedBlindIndex
             }, select: {
                 firstName: true,
                 surName: true,
@@ -48,7 +49,6 @@ export class AuthService {
         return createUser
 
        } catch(error: any) {
-        log('MY ERROR', error);
          if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2002") {
                 throw new BadRequestException('User with this email already exist')
