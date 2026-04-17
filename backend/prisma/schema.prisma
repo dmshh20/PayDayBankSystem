@@ -15,6 +15,7 @@ model User {
   cardNumber    String   @unique
   cardIndex     String   @unique
   password      String
+  balance       Float    @default(0)
   createdAt     DateTime   @default(now()) 
   updatedAt     DateTime   @updatedAt
 

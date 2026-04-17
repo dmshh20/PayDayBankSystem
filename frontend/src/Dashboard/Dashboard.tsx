@@ -7,7 +7,6 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
-
 import { Line } from 'react-chartjs-2'
 import revenue from '../data/revenue.json'
 import {
@@ -24,6 +23,8 @@ import { Link, NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import ExitModel from '../Modals/ExitModal'
+import  visaLogo  from '../image/visa-logo.png'
+import defaultUserLogo from '../image/default-logo.png'
 
 ChartJS.register(
   CategoryScale,
@@ -125,7 +126,7 @@ const Dashboard = () => {
                     <h1>Send Money</h1>
                     <div className='cardType'>
                       <div className='cardInfo'>
-                        <img src="#" alt="#" className='bankImage'/>
+                        <img src={visaLogo} alt="Visa Card" className='bankImage'/>
                         <p className='bankName'>Visa Card</p>
                       </div>
                       <div className='currentSumOfTheCurrentBank'>
@@ -136,8 +137,8 @@ const Dashboard = () => {
                 </div>
 
                 <div className='enterTheAmount'>
-                  <div className='cardInfo'>
-                    <img src="#" alt="#" className='bankImage'/>
+                  <div className='cardInfo cardInfoAmount'>
+                    <img src={visaLogo} alt="#" className='bankImage'/>
                     <p className='amountDesc'>Enter the amount</p>
                   </div>
                   <div className='enterTheAmountInInput'>
@@ -148,7 +149,7 @@ const Dashboard = () => {
 
                 <div className='recipient'>
                   <div className='recipientInfo'>
-                    <img src="#" alt="#" />
+                    <img src={defaultUserLogo} alt="#" className='defaultUserLogo'/>
                     <p className='recipientUserName'>Enter user card number</p>
                   </div>
                   <FontAwesomeIcon icon={faPlus} className='addRecipient' />

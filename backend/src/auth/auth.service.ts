@@ -38,7 +38,8 @@ export class AuthService {
                 email: body.email,
                 password: hashedPassword,
                 cardNumber: hashedCard,
-                cardIndex: hashedBlindIndex
+                cardIndex: hashedBlindIndex,
+                balance: 0
             }, select: {
                 firstName: true,
                 surName: true,
