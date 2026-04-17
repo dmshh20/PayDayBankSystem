@@ -339,3 +339,23 @@
     height: 35px;
     border-radius: 20px;
 }
+
+/* sendmoney */
+.transferForm h1 {
+    font-size: 17px;
+    text-align: center;
+    margin-top: 10px;
+}
+.transferFormDetails {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 70px;
+}
+.cardNumberInput {
+    padding: 10px;
+    width: 250px;
+    font-size: 18px;
+}
+/* sendmoney */

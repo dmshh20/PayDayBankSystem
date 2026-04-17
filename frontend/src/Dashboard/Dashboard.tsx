@@ -22,9 +22,10 @@ import {
 import { Link, NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import ExitModel from '../Modals/ExitModal'
+import ExitModel from '../Modals/ExitModal/ExitModal'
 import  visaLogo  from '../image/visa-logo.png'
-import defaultUserLogo from '../image/default-logo.png'
+import defaultUserLogo from '../image/default-user-logo.png'
+import SendMoneyModal from '../Modals/SendMoneyModal/SendMoneyModal'
 
 ChartJS.register(
   CategoryScale,
@@ -37,7 +38,8 @@ ChartJS.register(
 )
 
 const Dashboard = () => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
+  const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const [userName, setUserName] = useState<[] | any>(null)
   const token = localStorage.getItem('accessToken')
 
@@ -74,7 +76,7 @@ const Dashboard = () => {
   }
 
   const handleButtons = () => {
-    setIsModalOpen(true)
+    setIsExitModalOpen(true)
   }
 
   const handleExit = () => {
@@ -100,11 +102,11 @@ const Dashboard = () => {
         </div>
 
 
-          {isModalOpen && <ExitModel setIsModalOpen={setIsModalOpen}> 
+          {isExitModalOpen && <ExitModel setIsModalOpen={setIsExitModalOpen}> 
             <div className='exitBlock'>
               <h3>Do you really want to exit?</h3>
               <div className='exitButtons'>
-                  <button onClick={() => setIsModalOpen(false)} className='stayButton'>Stay</button>
+                  <button onClick={() => setIsExitModalOpen(false)} className='stayButton'>Stay</button>
                   <NavLink to='/signin' onClick={handleExit}>
                      <button className='exitButton'>Exit</button>
                   </NavLink>
@@ -143,7 +145,7 @@ const Dashboard = () => {
                   </div>
                   <div className='enterTheAmountInInput'>
                     <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollarInput'/></p>
-                    <input type="number" className='amountOfTransfer'/>
+                    <input type="number" className='amountOfTransfer' placeholder='1000'/>
                   </div>
                 </div>
 
@@ -156,9 +158,22 @@ const Dashboard = () => {
                 </div>
 
                 <div className='sendingMoneySection'>
-                  <button className='sendMoneyButton'>Send Money</button>
+                  <button className='sendMoneyButton' onClick={() => setIsSendMoneyModalOpen(true)}>Send Money</button>
                 </div>
             </div>
+
+              {isSendMoneyModalOpen && <SendMoneyModal setIsSendMoneyModalOpen={setIsSendMoneyModalOpen}>
+                <div className='transferForm'>
+                  <h1>Enter Card Number You want to send money</h1>
+
+                  <div className='transferFormDetails'>
+                    <h4>Card Number</h4>
+                    <input type="text" placeholder='1234 5678 9123 4567' className='cardNumberInput'/>
+                  </div>
+                </div>
+                </SendMoneyModal>}
+             
+
             <div className='theOutsideSecondBlock'>
 
             <div className='theSecondBlock'>

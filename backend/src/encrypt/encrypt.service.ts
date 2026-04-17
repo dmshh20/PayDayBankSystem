@@ -31,10 +31,12 @@ export class EncryptService {
 
     async generateCardNumber() {
         let myCardNumber = '21'
-        const needsFigures = 18
+        const needsFigures = 13
         for (let i = 0; i <= needsFigures; i++) {
             myCardNumber += randomInt(9);
         }
+        console.log('CARAD NUSD', myCardNumber);
+        
          return myCardNumber
     }
 
