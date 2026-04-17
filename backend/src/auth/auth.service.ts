@@ -29,7 +29,7 @@ export class AuthService {
         const generatedCard = await this.encryptService.generateCardNumber()
         const hashedCard = await this.encryptService.encryptCardNumber(generatedCard)
         const hashedPassword = await this.hashPassword(body.password)
-        const hashedBlindIndex = await this.encryptService.hashingBlindIndex(body.password)
+        const hashedBlindIndex = await this.encryptService.hashingBlindIndex(generatedCard)
 
         const createUser = await this.prisma.user.create({
             data: {
