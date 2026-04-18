@@ -7,6 +7,8 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
+import { faCreditCard } from '@fortawesome/free-solid-svg-icons'
+
 import { Line } from 'react-chartjs-2'
 import revenue from '../data/revenue.json'
 import {
@@ -38,10 +40,13 @@ ChartJS.register(
 )
 
 const Dashboard = () => {
+  const [sum, setSum] = useState<string>()
+  const [cardNumber, setCardNumber] = useState('');
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const [userName, setUserName] = useState<[] | any>(null)
   const token = localStorage.getItem('accessToken')
+  const [process, setProcess] = useState()
 
     useEffect(() => {
       document.body.style.overflow = 'hidden'
@@ -75,6 +80,16 @@ const Dashboard = () => {
     }
   }
 
+  function enteringCardNumber(card: string) {
+    if (card != null) {
+      card = card.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+      console.log(card);
+    } 
+  
+    return card;
+  }
+
+
   const handleButtons = () => {
     setIsExitModalOpen(true)
   }
@@ -83,6 +98,35 @@ const Dashboard = () => {
     localStorage.removeItem('accessToken')
   }
 
+  const handleCardNumberSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    
+    try {
+      const token = localStorage.getItem('accessToken')
+      if (!token) {
+        throw new Error('token is not valid')
+      }
+      
+      const body = {
+        cardNumber,
+        sum: Number(sum)
+      }
+      
+      const response = await axios.post(import.meta.env.VITE_TRANSFER, body , {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      setProcess(response.data.message)
+      return response.data
+
+    } catch(error: any) {
+      throw new Error('Failed in transfer money')
+    }
+    
+  }
+ 
   return (
     <section className='dashboard'>
         <div className='personalUserInfo'>
@@ -145,7 +189,12 @@ const Dashboard = () => {
                   </div>
                   <div className='enterTheAmountInInput'>
                     <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollarInput'/></p>
-                    <input type="number" className='amountOfTransfer' placeholder='1000'/>
+                    <input type="number"
+                      className='amountOfTransfer'
+                      placeholder='1000'
+                      value={sum}
+                      onChange={(e) => setSum(e.target.value)}
+                      />
                   </div>
                 </div>
 
@@ -168,7 +217,23 @@ const Dashboard = () => {
 
                   <div className='transferFormDetails'>
                     <h4>Card Number</h4>
-                    <input type="text" placeholder='1234 5678 9123 4567' className='cardNumberInput'/>
+                    <div className='cardInputBlock'>
+
+                    <FontAwesomeIcon icon={faCreditCard} className='creditCardIcon' />
+                      <input type="text" 
+                      placeholder='1234 5678 9123 4567' 
+                      className='cardNumberInput'
+                      value={cardNumber}
+                      onChange={(e) => setCardNumber(enteringCardNumber(e.target.value))}
+                      maxLength={19}
+                      />
+                    </div>
+
+                      <button onClick={handleCardNumberSubmit} className='handleTransferMoney'>Transfer</button>
+                      <p className='successfulOperation'>
+                      {process}
+
+                      </p>
                   </div>
                 </div>
                 </SendMoneyModal>}

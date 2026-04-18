@@ -1,3 +1,4 @@
 {
-    "js/ts.preferences.importModuleSpecifierEnding": "index"
+    "js/ts.preferences.importModuleSpecifierEnding": "index",
+    "editor.suggest.selectionMode": "always"
 }

@@ -35,7 +35,6 @@ export class EncryptService {
         for (let i = 0; i <= needsFigures; i++) {
             myCardNumber += randomInt(9);
         }
-        console.log('CARAD NUSD', myCardNumber);
         
          return myCardNumber
     }

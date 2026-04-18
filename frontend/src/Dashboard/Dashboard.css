@@ -347,15 +347,55 @@
     margin-top: 10px;
 }
 .transferFormDetails {
+   position: relative;
+
+}
+.creditCardIcon {
+    position: absolute;
+    padding: 10px;
+    min-width: 20px;
+    margin-top: 2px;
+    font-size: 24px;
+}
+.cardNumberInput {
+   width: 300px;
+   padding: 10px;
+   margin-bottom: 4px;
+   padding-left: 48px;
+   font-size: 18px;
+   
+}
+.transferForm {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 70px;
 }
-.cardNumberInput {
+.transferFormDetails {
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+}
+.cardInputBlock {
+    margin-bottom: 50px;
+}
+.transferFormDetails h4 {
+    text-align: center;
+}
+.handleTransferMoney {
+    width: 200px;
+    margin: 0 auto;
     padding: 10px;
-    width: 250px;
+    border-radius: 18px;
+    background-color: #0177fb;
     font-size: 18px;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.successfulOperation {
+    color: green;
+    text-align: center;
+    margin-top: 25px;
 }
 /* sendmoney */

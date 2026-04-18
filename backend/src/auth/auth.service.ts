@@ -7,7 +7,6 @@ import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { getUserDto } from './decorator/getUser.dto';
 import { Prisma } from 'generated/prisma/client';
-import { log } from 'node:console';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +27,8 @@ export class AuthService {
         
         const generatedCard = await this.encryptService.generateCardNumber()
         const hashedCard = await this.encryptService.encryptCardNumber(generatedCard)
+        console.log(generatedCard);
+        
         const hashedPassword = await this.hashPassword(body.password)
         const hashedBlindIndex = await this.encryptService.hashingBlindIndex(generatedCard)
 
