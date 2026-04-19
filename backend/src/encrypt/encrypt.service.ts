@@ -37,9 +37,6 @@ export class EncryptService {
         decipher.final(),
         ]);
 
-        console.log();
-        
-
         return decryptedText.toString('utf8')
     }
 

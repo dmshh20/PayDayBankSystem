@@ -110,10 +110,8 @@ const Dashboard = () => {
         }
       })
       const cardNumber = response.data.cardNumber
-      console.log(cardNumber);
       
       setUserCardNumberForDecrypt(cardNumber)
-      console.log('if its true', userCardNumberForDecrypt);
       
       setUserName(response.data)
     } catch(error: any) {
@@ -156,8 +154,6 @@ const Dashboard = () => {
         if (!token) {
           throw new Error('token is not valid')
         }
-        console.log('HEREE', userCardNumberForDecrypt);
-        
         const response = await axios.post('http://localhost:3000/encrypt/decrypt', 
         {cardNumber: userCardNumberForDecrypt},
         {
@@ -168,14 +164,11 @@ const Dashboard = () => {
         }
       )
       
-      console.log('card nummmber',response.data);
-      
       setCardNumberInTheBankScreen(response.data)
-      console.log('my card', cardNumberInTheBankScreen);
       
     } catch(error: any) {
-      console.log(error);
-      
+      console.log('here', error);
+        throw new Error('failed in decrypt')
     }
   }
 
