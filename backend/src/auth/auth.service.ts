@@ -101,7 +101,7 @@ export class AuthService {
                 throw Error('')
             }
            
-            const {password, cardNumber, ...clearnUser} = existingUser
+            const {password, ...clearnUser} = existingUser
 
             return clearnUser
         } catch(error: any) {

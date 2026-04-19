@@ -49,6 +49,8 @@ const Dashboard = () => {
   const token = localStorage.getItem('accessToken')
   const [process, setProcess] = useState<string>('')
   const [error, setError] = useState<string>()
+  const [userCardNumberForDecrypt, setUserCardNumberForDecrypt] = useState<string>('')
+  const [cardNumberInTheBankScreen, setCardNumberInTheBankScreen] = useState()
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -67,6 +69,11 @@ const Dashboard = () => {
       }
   }, [])
 
+  useEffect( () => {
+           decryptCardNumber()
+
+  }, [userCardNumberForDecrypt])
+
   useEffect(() => {
     if (!isSendMoneyModalOpen) {
       // setCardNumber('')
@@ -75,26 +82,13 @@ const Dashboard = () => {
     }
   }, [isSendMoneyModalOpen])
 
-  const isAuthorized = async () => {
-    try {
-      const response = await axios.get(import.meta.env.VITE_ME, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'          
-        }
-      })
-      setUserName(response.data)
-    } catch(error: any) {
-      throw new Error('Failed in getting user data')
-    }
-  }
 
   function enteringCardNumber(card: string) {
     if (card != null) {
       card = card.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
       console.log(card);
     } 
-  
+    
     return card;
   }
 
@@ -107,11 +101,28 @@ const Dashboard = () => {
     localStorage.removeItem('accessToken')
   }
 
+   const isAuthorized = async () => {
+    try {
+      const response = await axios.get(import.meta.env.VITE_ME, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'          
+        }
+      })
+      const cardNumber = response.data.cardNumber
+      console.log(cardNumber);
+      
+      setUserCardNumberForDecrypt(cardNumber)
+      console.log('if its true', userCardNumberForDecrypt);
+      
+      setUserName(response.data)
+    } catch(error: any) {
+      throw new Error('Failed in getting user data')
+    }
+  }
+
   const handleCardNumberSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
-    
-    
     try {
       const token = localStorage.getItem('accessToken')
       if (!token) {
@@ -129,19 +140,45 @@ const Dashboard = () => {
           'Content-Type': 'application/json'
         }
       })
+      
       setProcess(response.data.message) 
-
       return response.data
-
     } catch(error: any) {
-
       if (error.response.status === 400) {
         setError('Insuffienct funds')        
       }
     }
-    
   }
  
+  const decryptCardNumber = async () => {
+    try {
+        const token = localStorage.getItem('accessToken')
+        if (!token) {
+          throw new Error('token is not valid')
+        }
+        console.log('HEREE', userCardNumberForDecrypt);
+        
+        const response = await axios.post('http://localhost:3000/encrypt/decrypt', 
+        {cardNumber: userCardNumberForDecrypt},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      
+      console.log('card nummmber',response.data);
+      
+      setCardNumberInTheBankScreen(response.data)
+      console.log('my card', cardNumberInTheBankScreen);
+      
+    } catch(error: any) {
+      console.log(error);
+      
+    }
+  }
+
   return (
     <section className='dashboard'>
         <div className='personalUserInfo'>
@@ -180,7 +217,7 @@ const Dashboard = () => {
                         <p>Name</p>
                         <h4>Artem Dmysh</h4>
                     </div>  
-                    <p className='userCardNumber'>1234 5678 9012 3456</p>
+                    <p className='userCardNumber'>{cardNumberInTheBankScreen}</p>
                 </div>
 
                 <div className='transfer'>
