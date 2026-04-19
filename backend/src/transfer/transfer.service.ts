@@ -38,7 +38,7 @@ export class TransferService {
                     }
                 })
                 if (sender.balance < 0) {
-                    throw new Error("Insufficient funds")
+                    throw new BadRequestException("Insufficient funds")
                  }
 
                 await this.prisma.user.update({

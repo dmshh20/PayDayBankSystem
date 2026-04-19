@@ -398,4 +398,9 @@
     text-align: center;
     margin-top: 25px;
 }
+.error {
+    color: red;
+    text-align: center;
+    margin-top: 25px;
+}
 /* sendmoney */

@@ -40,20 +40,22 @@ ChartJS.register(
 )
 
 const Dashboard = () => {
-  const [sum, setSum] = useState<string>()
+  const [currentSumAccount, setCurrentSumAccount] = useState('')
+  const [sumTransfer, setSumTransfer] = useState<string>()
   const [cardNumber, setCardNumber] = useState('');
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const [userName, setUserName] = useState<[] | any>(null)
   const token = localStorage.getItem('accessToken')
-  const [process, setProcess] = useState()
+  const [process, setProcess] = useState<string>('')
+  const [error, setError] = useState<string>()
 
-    useEffect(() => {
-      document.body.style.overflow = 'hidden'
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
 
-      return () => {
-        document.body.style.overflow ? 'hidden' : 'unset'
-      }
+    return () => {
+      document.body.style.overflow ? 'hidden' : 'unset'
+    }
     }, [])
 
   useEffect( () => {
@@ -65,6 +67,14 @@ const Dashboard = () => {
       }
   }, [])
 
+  useEffect(() => {
+    if (!isSendMoneyModalOpen) {
+      // setCardNumber('')
+      setError('')
+      setProcess('')
+    }
+  }, [isSendMoneyModalOpen])
+
   const isAuthorized = async () => {
     try {
       const response = await axios.get(import.meta.env.VITE_ME, {
@@ -73,7 +83,6 @@ const Dashboard = () => {
           'Content-Type': 'application/json'          
         }
       })
-      
       setUserName(response.data)
     } catch(error: any) {
       throw new Error('Failed in getting user data')
@@ -100,6 +109,8 @@ const Dashboard = () => {
 
   const handleCardNumberSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
+    
     
     try {
       const token = localStorage.getItem('accessToken')
@@ -109,7 +120,7 @@ const Dashboard = () => {
       
       const body = {
         cardNumber,
-        sum: Number(sum)
+        sum: Number(sumTransfer)
       }
       
       const response = await axios.post(import.meta.env.VITE_TRANSFER, body , {
@@ -118,11 +129,15 @@ const Dashboard = () => {
           'Content-Type': 'application/json'
         }
       })
-      setProcess(response.data.message)
+      setProcess(response.data.message) 
+
       return response.data
 
     } catch(error: any) {
-      throw new Error('Failed in transfer money')
+
+      if (error.response.status === 400) {
+        setError('Insuffienct funds')        
+      }
     }
     
   }
@@ -192,8 +207,9 @@ const Dashboard = () => {
                     <input type="number"
                       className='amountOfTransfer'
                       placeholder='1000'
-                      value={sum}
-                      onChange={(e) => setSum(e.target.value)}
+                      required
+                      value={sumTransfer}
+                      onChange={(e) => setSumTransfer(e.target.value)}
                       />
                   </div>
                 </div>
@@ -230,10 +246,8 @@ const Dashboard = () => {
                     </div>
 
                       <button onClick={handleCardNumberSubmit} className='handleTransferMoney'>Transfer</button>
-                      <p className='successfulOperation'>
-                      {process}
-
-                      </p>
+                      <p className='successfulOperation'>{process}</p>
+                      <p className='error'>{error}</p>
                   </div>
                 </div>
                 </SendMoneyModal>}
