@@ -40,7 +40,7 @@ ChartJS.register(
 )
 
 const Dashboard = () => {
-  const [currentSumAccount, setCurrentSumAccount] = useState('')
+  const [currentSumAccount, setCurrentSumAccount] = useState<number>(0)
   const [sumTransfer, setSumTransfer] = useState<string>()
   const [cardNumber, setCardNumber] = useState('');
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
@@ -71,8 +71,8 @@ const Dashboard = () => {
 
   useEffect( () => {
            decryptCardNumber()
-
   }, [userCardNumberForDecrypt])
+
 
   useEffect(() => {
     if (!isSendMoneyModalOpen) {
@@ -85,9 +85,8 @@ const Dashboard = () => {
 
   function enteringCardNumber(card: string) {
     if (card != null) {
-      card = card.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
-      console.log(card);
-    } 
+      card = card.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim()
+        } 
     
     return card;
   }
@@ -110,8 +109,10 @@ const Dashboard = () => {
         }
       })
       const cardNumber = response.data.cardNumber
-      
+      const currSum = response.data.balance
+
       setUserCardNumberForDecrypt(cardNumber)
+      setCurrentSumAccount(currSum)
       
       setUserName(response.data)
     } catch(error: any) {
@@ -154,7 +155,7 @@ const Dashboard = () => {
         if (!token) {
           throw new Error('token is not valid')
         }
-        const response = await axios.post('http://localhost:3000/encrypt/decrypt', 
+        const response = await axios.post(import.meta.env.VITE_DECRYPT, 
         {cardNumber: userCardNumberForDecrypt},
         {
           headers: {
@@ -221,7 +222,7 @@ const Dashboard = () => {
                         <p className='bankName'>Visa Card</p>
                       </div>
                       <div className='currentSumOfTheCurrentBank'>
-                        <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>10.680</p>
+                        <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>{currentSumAccount}</p>
                        <FontAwesomeIcon icon={faAngleDown} className='faAngleDown'/>
                       </div>
                     </div>
