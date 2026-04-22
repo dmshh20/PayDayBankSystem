@@ -46,11 +46,10 @@ const Dashboard = () => {
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const [userName, setUserName] = useState<[] | any>(null)
-  const token = localStorage.getItem('accessToken')
   const [process, setProcess] = useState<string>('')
   const [error, setError] = useState<string>()
   const [userCardNumberForDecrypt, setUserCardNumberForDecrypt] = useState<string>('')
-  const [cardNumberInTheBankScreen, setCardNumberInTheBankScreen] = useState()
+  const [cardNumberInTheBankScreen, setCardNumberInTheBankScreen] = useState<string | number>()
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -59,19 +58,21 @@ const Dashboard = () => {
       document.body.style.overflow ? 'hidden' : 'unset'
     }
     }, [])
-
+  
   useEffect( () => {
-      return () => {
-        const recognizeUser = async () => {
-          await isAuthorized()
-        }
-        recognizeUser()
+    const init = async () => {
+
+
+      const auth = await isAuthorized()
+
+      if (auth) {
+        await decryptCardNumber(auth.cardNumber)
       }
-  }, [])
+    }
+    init()
 
-  useEffect( () => {
-           decryptCardNumber()
   }, [userCardNumberForDecrypt])
+  
 
 
   useEffect(() => {
@@ -82,6 +83,13 @@ const Dashboard = () => {
     }
   }, [isSendMoneyModalOpen])
 
+
+  function handleCardNumber(cardNumber: any) {
+   let cn = String(cardNumber).replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim()
+   
+   setCardNumberInTheBankScreen(cn)
+   
+  }
 
   function enteringCardNumber(card: string) {
     if (card != null) {
@@ -102,6 +110,7 @@ const Dashboard = () => {
 
    const isAuthorized = async () => {
     try {
+      const token = localStorage.getItem('accessToken')
       const response = await axios.get(import.meta.env.VITE_ME, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -115,6 +124,7 @@ const Dashboard = () => {
       setCurrentSumAccount(currSum)
       
       setUserName(response.data)
+      return response.data
     } catch(error: any) {
       throw new Error('Failed in getting user data')
     }
@@ -149,14 +159,14 @@ const Dashboard = () => {
     }
   }
  
-  const decryptCardNumber = async () => {
+  const decryptCardNumber = async (decryptedCardNumber: string) => {
     try {
         const token = localStorage.getItem('accessToken')
         if (!token) {
           throw new Error('token is not valid')
         }
         const response = await axios.post(import.meta.env.VITE_DECRYPT, 
-        {cardNumber: userCardNumberForDecrypt},
+        {cardNumber: decryptedCardNumber},
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -164,11 +174,11 @@ const Dashboard = () => {
           }
         }
       )
-      
-      setCardNumberInTheBankScreen(response.data)
-      
+      handleCardNumber(response.data)
+      return response.data
     } catch(error: any) {
-      console.log('here', error);
+      console.log(error);
+      
         throw new Error('failed in decrypt')
     }
   }

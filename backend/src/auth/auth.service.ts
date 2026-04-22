@@ -27,7 +27,6 @@ export class AuthService {
         
         const generatedCard = await this.encryptService.generateCardNumber()
         const hashedCard = await this.encryptService.encryptCardNumber(generatedCard)
-        console.log(generatedCard);
         
         const hashedPassword = await this.hashPassword(body.password)
         const hashedBlindIndex = await this.encryptService.hashingBlindIndex(generatedCard)
