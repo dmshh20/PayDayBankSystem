@@ -27,6 +27,19 @@ export class TransferService {
 
             
             return await this.prisma.$transaction(async () => {
+                const existingEnoughMoney = await this.prisma.user.findUnique({
+                    where: {
+                        id: existingSender.id
+                    }
+                })
+                
+                if (!existingEnoughMoney) {
+                    throw new BadRequestException('User was not found')
+                }
+                if (existingEnoughMoney.balance < currentSum) {
+                    throw new BadRequestException("Insufficient funds")
+                 }
+                 
                 const sender = await this.prisma.user.update({
                     where: {
                         id: existingSender.id
@@ -37,10 +50,7 @@ export class TransferService {
                         }
                     }
                 })
-                if (sender.balance < 0) {
-                    throw new BadRequestException("Insufficient funds")
-                 }
-
+                
                 await this.prisma.user.update({
                     where: {
                         cardIndex: existingCardNumber.cardIndex
