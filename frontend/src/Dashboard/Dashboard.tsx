@@ -148,9 +148,9 @@ const Dashboard = () => {
           'Content-Type': 'application/json'
         }
       })
-      
+      const currentSum = response.data.balance
+      currentSum === undefined ? setCurrentSumAccount(0) : currentSum
       setProcess(response.data.message) 
-      setCurrentSumAccount(response.data.balance)
       return response.data
     } catch(error: any) {
       if (error.response.status === 400) {
