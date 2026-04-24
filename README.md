@@ -47,19 +47,28 @@ A modern, full-stack banking system built with **NestJS**, **React**, **TypeScri
   - Revenue analytics with Chart.js
   - Transaction visualization
   - User account overview
+  - Real-time balance display
+  - Automatic data refresh on load
+
+- **Money Transfers**
+  - Send money to other users by card number
+  - Real-time balance updates
+  - Automatic transfer validation
+  - Error handling (insufficient funds)
+  - Modal-based transfer interface
 
 - **Security**
   - Password encryption with bcrypt
   - Card encryption with AES-256-CTR
   - Blind index hashing for secure searches
+  - ACID transactions for money transfers
   - CORS enabled
   - Input validation with class-validator
 
 ### 🔄 In Progress / Planned
 
 - Multi-factor authentication (MFA)
-- Money transfer functionality
-- Transaction history
+- Transaction history & detailed logs
 - Card block/unblock features
 - Admin dashboard
 - Email notifications
@@ -141,6 +150,7 @@ A modern, full-stack banking system built with **NestJS**, **React**, **TypeScri
 1. **Registration:** User → Frontend → Backend (Encrypt Module) → Database
 2. **Login:** User Credentials → JWT Service → Token → Frontend (localStorage)
 3. **Protected Route:** Token → JWT Guard → User Data → Dashboard
+4. **Money Transfer:** Sender Card → Backend (Validation) → ACID Transaction → Balance Update → Frontend (Real-time)
 
 ---
 
@@ -495,6 +505,59 @@ Authorization: Bearer <access_token>
 
 ---
 
+#### 4. **Money Transfer**
+
+**Endpoint:** `POST /transfer`
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "cardNumber": "1234 5678 9123 4567",
+  "sum": 500
+}
+```
+
+**Response (Success - 200):**
+```json
+{
+  "message": "Money was sent successfully",
+  "sender": {
+    "id": 1,
+    "firstName": "John",
+    "balance": 1500
+  }
+}
+```
+
+**Response (Error - 400):**
+```json
+{
+  "statusCode": 400,
+  "message": "Insufficient funds",
+  "error": "Bad Request"
+}
+```
+
+**Validation Rules:**
+- Recipient card must exist in system
+- Sender must have sufficient balance
+- Amount must be greater than 0
+- Uses blind index to find recipient securely
+
+**Features:**
+- ACID transaction ensures atomic balance updates
+- Both sender and recipient balances update atomically
+- Prevents partial transfers
+- Real-time balance synchronization
+
+---
+
 ## Database Schema
 
 ### User Model
@@ -506,8 +569,9 @@ model User {
   surName     String
   email       String    @unique
   cardNumber  String    @unique        // AES-256 encrypted
-  cardIndex   String                   // Blind index hash
+  cardIndex   String    @unique        // Blind index hash
   password    String                   // Bcrypt hashed
+  balance     Float     @default(0)    // Account balance
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -524,6 +588,7 @@ model User {
 | `cardNumber` | String | Bank card number | AES-256-CTR |
 | `cardIndex` | String | Searchable blind index | HMAC-SHA256 |
 | `password` | String | Login password | Bcrypt (10 rounds) |
+| `balance` | Float | Account balance for transfers | None |
 | `createdAt` | DateTime | Account creation time | - |
 | `updatedAt` | DateTime | Last update time | - |
 
@@ -585,6 +650,51 @@ const token = this.jwt.sign({ id: user.id });
 - JWT Guard validates every request
 - Automatically rejects invalid tokens
 - Decorated with `@UseGuards(JwtGuard)`
+
+### 6. **ACID Transactions**
+- Money transfers use `prisma.$transaction()`
+- Ensures atomic updates (all-or-nothing)
+- Prevents partial transfers if errors occur
+- Both sender and recipient balances update simultaneously
+- Database rollback on failure
+
+```typescript
+// Example: Atomic transfer
+await prisma.$transaction(async () => {
+  // Deduct from sender
+  await prisma.user.update({
+    where: { id: senderId },
+    data: { balance: { decrement: amount } }
+  })
+  
+  // Add to recipient
+  await prisma.user.update({
+    where: { id: recipientId },
+    data: { balance: { increment: amount } }
+  })
+})
+```
+
+### 7. **Automatic Data Rendering**
+- Dashboard auto-fetches user data on component mount
+- Real-time balance updates after transfers
+- Automatic card number decryption on load
+- State synchronization with backend
+- Error handling for failed requests
+
+```typescript
+// Example: Auto-fetch on mount
+useEffect(() => {
+  const init = async () => {
+    const userData = await isAuthorized()
+    if (userData) {
+      await decryptCardNumber(userData.cardNumber)
+      setCurrentSumAccount(userData.balance)
+    }
+  }
+  init()
+}, [])
+```
 
 ---
 
@@ -673,23 +783,32 @@ npm run lint           # Run ESLint
 - [x] User profile display
 - [x] Analytics charts
 - [x] Revenue tracking
+- [x] Real-time balance display
 
-### Phase 4: Multi-Factor Auth 🔄
+### Phase 4: Money Transfers ✅
+- [x] Transfer functionality
+- [x] ACID transactions
+- [x] Balance management
+- [x] Error validation
+- [x] Frontend modal interface
+
+### Phase 5: Multi-Factor Auth 🔄
 - [ ] Email verification
 - [ ] OTP (One-Time Password)
 - [ ] SMS 2FA
 - [ ] Authenticator app support
 
-### Phase 5: Advanced Features 🚀
-- [ ] Money transfers
-- [ ] Transaction history
+### Phase 6: Advanced Features 🚀
+- [ ] Transaction history & detailed logs
 - [ ] Card blocking/unblocking
 - [ ] Admin dashboard
 - [ ] Email notifications
 - [ ] Rate limiting
 - [ ] Audit logging
+- [ ] Recurring transfers
+- [ ] Transfer scheduling
 
-### Phase 6: Deployment 🔮
+### Phase 7: Deployment 🔮
 - [ ] CI/CD pipeline (GitHub Actions)
 - [ ] Cloud deployment (AWS/GCP)
 - [ ] Database backup strategy
@@ -832,4 +951,4 @@ For questions or issues, please:
 
 **Happy coding! 🚀**
 
-Last Updated: April 17, 2026
+Last Updated: April 24, 2026
