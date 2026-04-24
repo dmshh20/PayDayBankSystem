@@ -50,7 +50,7 @@ export class TransferService {
                         }
                     }
                 })
-                return {message: "Money was sent successfully"}
+                return {message: "Money was sent successfully", sender}
             })
         } catch(error: any) {
             throw new BadRequestException('Failed during transfer')            

@@ -74,10 +74,9 @@ const Dashboard = () => {
   }, [userCardNumberForDecrypt])
   
 
-
   useEffect(() => {
     if (!isSendMoneyModalOpen) {
-      // setCardNumber('')
+      setCardNumber('')
       setError('')
       setProcess('')
     }
@@ -151,6 +150,7 @@ const Dashboard = () => {
       })
       
       setProcess(response.data.message) 
+      setCurrentSumAccount(response.data.balance)
       return response.data
     } catch(error: any) {
       if (error.response.status === 400) {
@@ -177,8 +177,6 @@ const Dashboard = () => {
       handleCardNumber(response.data)
       return response.data
     } catch(error: any) {
-      console.log(error);
-      
         throw new Error('failed in decrypt')
     }
   }
@@ -219,7 +217,7 @@ const Dashboard = () => {
                 <div className='userCard'>
                     <div className='userCardName'>
                         <p>Name</p>
-                        <h4>Artem Dmysh</h4>
+                        <h4>{userName?.firstName} {userName?.surName}</h4>
                     </div>  
                     <p className='userCardNumber'>{cardNumberInTheBankScreen}</p>
                 </div>
