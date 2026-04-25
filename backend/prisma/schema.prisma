@@ -20,3 +20,15 @@ model User {
   updatedAt     DateTime   @updatedAt
 
 } 
+
+model LoggingTransaction {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  recipientId   Int
+  url           String
+  method        String
+  statusCode    Int
+  sum           Int
+  createdAt     DateTime   @default(now()) 
+  updatedAt     DateTime   @updatedAt
+}
