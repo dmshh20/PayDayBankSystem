@@ -404,3 +404,36 @@
     margin-top: 25px;
 }
 /* sendmoney */
+
+.listsOfRecentTransactions {
+    margin-top: 10px;
+}
+.listOfRecentTransactions {
+    display: flex;
+    gap: 90px;
+    text-align: left;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.recentTransactionsImage {
+    width: 35px;
+    height: 35px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+.recentTransactionsBlockAboutUser {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.recentTransactionStatusOfTheOperation {
+    width: 66px;
+    border-radius: 12px;
+    background-color: lightgreen;
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: green;
+}
+.recentTransactionStatusOfTheOperationBlock {
+}

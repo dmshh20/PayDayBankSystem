@@ -19,6 +19,8 @@ model User {
   createdAt     DateTime   @default(now()) 
   updatedAt     DateTime   @updatedAt
 
+  getSender    LoggingTransaction[] @relation("GetSender")
+  getRecipient LoggingTransaction[] @relation("GetRecipient")
 } 
 
 model LoggingTransaction {
@@ -31,4 +33,7 @@ model LoggingTransaction {
   sum           Int
   createdAt     DateTime   @default(now()) 
   updatedAt     DateTime   @updatedAt
+
+  user      User @relation("GetSender", fields: [userId], references: [id])
+  recipient User @relation("GetRecipient",fields: [recipientId], references: [id])
 }

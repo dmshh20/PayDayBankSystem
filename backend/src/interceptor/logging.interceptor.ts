@@ -19,7 +19,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const { url, method } = request
     const { sum, cardNumber} = request.body
     const userId = request.user?.id
-   
+
     
     const getCardNumber = String(cardNumber).replace(/\s+/g, '')
 

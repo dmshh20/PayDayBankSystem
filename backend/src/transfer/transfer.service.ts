@@ -67,4 +67,59 @@ export class TransferService {
         }
 
     }
+
+    async recentTransaction(user: getUserDto) {
+        try {
+            const userId = user.id
+
+            // const existingUser = await this.prisma.user.findUnique({where: {id: userId}})
+            // if (!existingUser) {
+            //     throw new BadRequestException('User not found')
+            // }
+            
+            // const { password , ...newUser} = existingUser
+
+            // return newUser
+
+            const recentTransaction = await this.prisma.loggingTransaction.findMany({
+                take: 5,
+                where: {
+                   OR: [
+                    {
+                        recipientId: userId,
+                    },
+                    {userId},
+                ]
+                }, orderBy: {
+                    createdAt: 'desc'
+                }
+                , include: {
+                    user: {
+                        select: {
+                            firstName: true,
+                            surName: true,
+                        }
+                    },
+                    recipient: {
+                        select: {
+                            cardNumber: true,
+                            firstName: true,
+                            surName: true,
+                            createdAt: true
+                        }
+                    }
+                    
+                }
+            })
+            // console.log('my user card', recentTransaction[0].recipient.cardNumber);
+            const recipientCardNumber = {cardNumber: recentTransaction[0].recipient.cardNumber}
+            const getUserDecryptCard = await this.encryptService.decryptCardNumber(recipientCardNumber)
+            const knownLastFourNumbers = getUserDecryptCard.slice(12,16)
+            
+            return {recentTransaction, knownLastFourNumbers }
+        } catch(error: any) {
+            console.log(error);
+            
+        }
+    }
 }

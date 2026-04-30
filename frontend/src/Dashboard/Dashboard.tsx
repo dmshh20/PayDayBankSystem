@@ -8,7 +8,6 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { faCreditCard } from '@fortawesome/free-solid-svg-icons'
-
 import { Line } from 'react-chartjs-2'
 import revenue from '../data/revenue.json'
 import {
@@ -28,6 +27,7 @@ import ExitModel from '../Modals/ExitModal/ExitModal'
 import  visaLogo  from '../image/visa-logo.png'
 import defaultUserLogo from '../image/default-user-logo.png'
 import SendMoneyModal from '../Modals/SendMoneyModal/SendMoneyModal'
+import boltLogo from '../image/bolt.png'
 
 ChartJS.register(
   CategoryScale,
@@ -50,6 +50,7 @@ const Dashboard = () => {
   const [error, setError] = useState<string>()
   const [userCardNumberForDecrypt, setUserCardNumberForDecrypt] = useState<string>('')
   const [cardNumberInTheBankScreen, setCardNumberInTheBankScreen] = useState<string | number>()
+  const [userRecentTransaction, setUserRecentTransaction] = useState<any>()
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -67,6 +68,7 @@ const Dashboard = () => {
 
       if (auth) {
         await decryptCardNumber(auth.cardNumber)
+        await recentTransaction()
       }
     }
     init()
@@ -178,6 +180,28 @@ const Dashboard = () => {
       return response.data
     } catch(error: any) {
         throw new Error('failed in decrypt')
+    }
+  }
+
+  const recentTransaction = async () => {
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      const response = await axios.get(import.meta.env.VITE_RECENT_TRANSACTIONS, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      console.log('my data', response.data);
+      setUserRecentTransaction(response.data)
+      console.log(userRecentTransaction);
+      
+      return response.data
+    } catch(error: any) {
+      console.log(error);
+      
     }
   }
 
@@ -345,9 +369,33 @@ const Dashboard = () => {
                       <p>View All</p>
                       <li style={{listStyle: 'none'}}><FontAwesomeIcon icon={faAngleRight} className='faArrowRight'/></li>
 
-                    </div>
+                    
 
                   </div>
+                  </div>
+                      <ul className='listsOfRecentTransactions'>
+                        {userRecentTransaction?.recentTransaction.map((user: any) => { 
+                          console.log(user);
+                          
+                          const transactionTime = user.recipient.createdAt.split('T')
+                          
+                          const [data, time] = transactionTime
+ 
+                         return ( <li className='listOfRecentTransactions'>
+                            <div className='recentTransactionsBlockAboutUser'>
+                              <img src={boltLogo} alt='here' className='recentTransactionsImage'></img>
+                              <p>{user?.recipient.firstName}  {user?.recipient.surName}</p>
+                            </div>
+                            <p className='recentTransactionsTime'>{data}</p>
+                            <p className='recentTransactionsCard'>****{userRecentTransaction?.knownLastFourNumbers}</p>
+                            <p>${user.sum}</p>
+                            <p className='recentTransactionStatusOfTheOperation'>status</p>
+
+                          </li>)
+                            })}
+                        
+                        
+                      </ul>
                 </div>
            
             </div>
