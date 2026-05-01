@@ -70,31 +70,22 @@ export class TransferService {
 
     async recentTransaction(user: getUserDto) {
         try {
-            const userId = user.id
-
-            // const existingUser = await this.prisma.user.findUnique({where: {id: userId}})
-            // if (!existingUser) {
-            //     throw new BadRequestException('User not found')
-            // }
+            const senderId = user.id
             
-            // const { password , ...newUser} = existingUser
-
-            // return newUser
-
             const recentTransaction = await this.prisma.loggingTransaction.findMany({
                 take: 5,
                 where: {
                    OR: [
                     {
-                        recipientId: userId,
+                        recipientId: senderId,
                     },
-                    {userId},
+                    {senderId},
                 ]
                 }, orderBy: {
                     createdAt: 'desc'
                 }
                 , include: {
-                    user: {
+                    sender: {
                         select: {
                             firstName: true,
                             surName: true,
@@ -111,11 +102,15 @@ export class TransferService {
                     
                 }
             })
-            // console.log('my user card', recentTransaction[0].recipient.cardNumber);
-            const recipientCardNumber = {cardNumber: recentTransaction[0].recipient.cardNumber}
+
+             if (recentTransaction.length < 1 || recentTransaction === undefined) {
+                return {message: 'have no transactions yet'}
+
+            }
+            const recipientCardNumber = {cardNumber: recentTransaction[0]?.recipient?.cardNumber}
             const getUserDecryptCard = await this.encryptService.decryptCardNumber(recipientCardNumber)
             const knownLastFourNumbers = getUserDecryptCard.slice(12,16)
-            
+
             return {recentTransaction, knownLastFourNumbers }
         } catch(error: any) {
             console.log(error);

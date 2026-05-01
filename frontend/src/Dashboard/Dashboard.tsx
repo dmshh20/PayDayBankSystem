@@ -28,6 +28,7 @@ import  visaLogo  from '../image/visa-logo.png'
 import defaultUserLogo from '../image/default-user-logo.png'
 import SendMoneyModal from '../Modals/SendMoneyModal/SendMoneyModal'
 import boltLogo from '../image/bolt.png'
+import type { RecentTransactionResponse } from '../types/transaction.interface'
 
 ChartJS.register(
   CategoryScale,
@@ -50,7 +51,7 @@ const Dashboard = () => {
   const [error, setError] = useState<string>()
   const [userCardNumberForDecrypt, setUserCardNumberForDecrypt] = useState<string>('')
   const [cardNumberInTheBankScreen, setCardNumberInTheBankScreen] = useState<string | number>()
-  const [userRecentTransaction, setUserRecentTransaction] = useState<any>()
+  const [userRecentTransaction, setUserRecentTransaction] = useState<any | null | string>()
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -62,7 +63,6 @@ const Dashboard = () => {
   
   useEffect( () => {
     const init = async () => {
-
 
       const auth = await isAuthorized()
 
@@ -194,14 +194,17 @@ const Dashboard = () => {
         }
       })
 
-      console.log('my data', response.data);
-      setUserRecentTransaction(response.data)
-      console.log(userRecentTransaction);
-      
+
+       {response.data.message 
+        ?
+        setUserRecentTransaction(response.data.message)
+        :
+        setUserRecentTransaction(response.data)
+       }
+
       return response.data
     } catch(error: any) {
-      console.log(error);
-      
+      throw new Error('Failed recent transaction')      
     }
   }
 
@@ -374,25 +377,28 @@ const Dashboard = () => {
                   </div>
                   </div>
                       <ul className='listsOfRecentTransactions'>
-                        {userRecentTransaction?.recentTransaction.map((user: any) => { 
-                          console.log(user);
+                          {
+                           typeof userRecentTransaction !== 'string'
+                           ? 
+                           userRecentTransaction?.recentTransaction.map((user: any) => { 
                           
                           const transactionTime = user.recipient.createdAt.split('T')
-                          
                           const [data, time] = transactionTime
  
-                         return ( <li className='listOfRecentTransactions'>
-                            <div className='recentTransactionsBlockAboutUser'>
-                              <img src={boltLogo} alt='here' className='recentTransactionsImage'></img>
-                              <p>{user?.recipient.firstName}  {user?.recipient.surName}</p>
-                            </div>
-                            <p className='recentTransactionsTime'>{data}</p>
-                            <p className='recentTransactionsCard'>****{userRecentTransaction?.knownLastFourNumbers}</p>
-                            <p>${user.sum}</p>
-                            <p className='recentTransactionStatusOfTheOperation'>status</p>
+                            return ( <li className='listOfRecentTransactions' key={user.id}>
+                                <div className='recentTransactionsBlockAboutUser'>
+                                  <img src={boltLogo} alt='here' className='recentTransactionsImage'></img>
+                                  <p>{user?.recipient.firstName}  {user?.recipient.surName}</p>
+                                </div>
+                                  <p className='recentTransactionsTime'>{data}</p>
+                                  <p className='recentTransactionsCard'>****{userRecentTransaction?.knownLastFourNumbers}</p>
+                                  <p>${user.sum}</p>
+                                  <p className='recentTransactionStatusOfTheOperation'>status</p>
 
-                          </li>)
-                            })}
+                                </li>)
+                                })
+                                : <p className='notifyUserAboutNoTransactionsYet'>{userRecentTransaction}</p>
+                               }
                         
                         
                       </ul>

@@ -25,7 +25,7 @@ model User {
 
 model LoggingTransaction {
   id            Int      @id @default(autoincrement())
-  userId        Int
+  senderId      Int
   recipientId   Int
   url           String
   method        String
@@ -34,6 +34,6 @@ model LoggingTransaction {
   createdAt     DateTime   @default(now()) 
   updatedAt     DateTime   @updatedAt
 
-  user      User @relation("GetSender", fields: [userId], references: [id])
+  sender    User @relation("GetSender", fields: [senderId], references: [id])
   recipient User @relation("GetRecipient",fields: [recipientId], references: [id])
 }

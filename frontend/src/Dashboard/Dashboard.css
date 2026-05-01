@@ -415,6 +415,9 @@
     align-items: center;
     margin-bottom: 10px;
 }
+.listOfRecentTransactionsInside {
+    
+}
 .recentTransactionsImage {
     width: 35px;
     height: 35px;
@@ -436,4 +439,9 @@
     color: green;
 }
 .recentTransactionStatusOfTheOperationBlock {
+}
+.notifyUserAboutNoTransactionsYet {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 50px;
 }

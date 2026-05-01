@@ -18,7 +18,7 @@ export class LoggingInterceptor implements NestInterceptor {
     
     const { url, method } = request
     const { sum, cardNumber} = request.body
-    const userId = request.user?.id
+    const senderId = request.user?.id
 
     
     const getCardNumber = String(cardNumber).replace(/\s+/g, '')
@@ -40,7 +40,7 @@ export class LoggingInterceptor implements NestInterceptor {
             if (existingCardNumber) {
                 await this.prisma.loggingTransaction.create({
                     data: {
-                        userId,
+                        senderId,
                         recipientId: Number(existingCardNumber.id),
                         url,
                         method,
