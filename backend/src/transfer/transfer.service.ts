@@ -93,6 +93,7 @@ export class TransferService {
                     },
                     recipient: {
                         select: {
+                            id: true,
                             cardNumber: true,
                             firstName: true,
                             surName: true,
@@ -113,8 +114,7 @@ export class TransferService {
 
             return {recentTransaction, knownLastFourNumbers }
         } catch(error: any) {
-            console.log(error);
-            
+            throw new Error('Failed in RecentTransactions function')            
         }
     }
 }

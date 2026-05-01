@@ -52,6 +52,7 @@ const Dashboard = () => {
   const [userCardNumberForDecrypt, setUserCardNumberForDecrypt] = useState<string>('')
   const [cardNumberInTheBankScreen, setCardNumberInTheBankScreen] = useState<string | number>()
   const [userRecentTransaction, setUserRecentTransaction] = useState<any | null | string>()
+  const [userId, setUserId] = useState<number>()
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -123,7 +124,7 @@ const Dashboard = () => {
 
       setUserCardNumberForDecrypt(cardNumber)
       setCurrentSumAccount(currSum)
-      
+      setUserId(response.data.id)
       setUserName(response.data)
       return response.data
     } catch(error: any) {
@@ -382,17 +383,19 @@ const Dashboard = () => {
                            ? 
                            userRecentTransaction?.recentTransaction.map((user: any) => { 
                           
-                          const transactionTime = user.recipient.createdAt.split('T')
-                          const [data, time] = transactionTime
- 
+                            const transactionTime = user.recipient.createdAt.split('T')
+                            const [data, time] = transactionTime
+                            const kindOfTransfer = user.recipient.id
+                            const userFullName = `${user?.recipient.firstName} ${user?.recipient.surName}`
+                            
                             return ( <li className='listOfRecentTransactions' key={user.id}>
                                 <div className='recentTransactionsBlockAboutUser'>
                                   <img src={boltLogo} alt='here' className='recentTransactionsImage'></img>
-                                  <p>{user?.recipient.firstName}  {user?.recipient.surName}</p>
+                                  <p>{kindOfTransfer !== userId ? userFullName : `Got from ${user?.sender.firstName} ${user?.sender.surName}`}</p>
                                 </div>
                                   <p className='recentTransactionsTime'>{data}</p>
                                   <p className='recentTransactionsCard'>****{userRecentTransaction?.knownLastFourNumbers}</p>
-                                  <p>${user.sum}</p>
+                                  <p>{kindOfTransfer !== userId ? '-' : '+'}${user.sum}</p>
                                   <p className='recentTransactionStatusOfTheOperation'>status</p>
 
                                 </li>)
