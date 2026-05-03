@@ -67,4 +67,57 @@ export class TransferService {
         }
 
     }
+
+    async recentTransaction(user: getUserDto) {
+        try {
+            const senderId = user.id
+            
+            const recentTransaction = await this.prisma.loggingTransaction.findMany({
+                take: 5,
+                where: {
+                   OR: [{recipientId: senderId},{senderId},]
+                }, orderBy: { createdAt: 'desc' }
+                , include: {
+                    sender: {
+                        select: { firstName: true, surName: true, cardNumber: true,
+                        }
+                    },
+                    recipient: {
+                        select: { id: true, cardNumber: true, firstName: true, surName: true, createdAt: true
+                        }
+                    }
+                }
+            })
+
+            
+             if (recentTransaction.length < 1 || recentTransaction === undefined) {
+                return {message: 'have no transactions yet'}
+            }
+            
+            const lastRecords = await Promise.all(
+                recentTransaction.map(async (record: any) => {
+
+                const decryptRecipient = await this.encryptService.decryptCardNumber(
+                    {cardNumber: record.recipient?.cardNumber})
+
+
+                const decryptSender = await this.encryptService.decryptCardNumber(
+                    {cardNumber: record.sender?.cardNumber})
+
+
+                    return {
+                        ...record,
+                        recipientLastFour: decryptRecipient.slice(-4),
+                        senderLastFour: decryptSender.slice(-4)
+                    }
+
+                })
+            )
+
+
+            return {lastRecords}
+        } catch(error: any) {
+            throw new Error('Failed in RecentTransactions function')            
+        }
+    }
 }

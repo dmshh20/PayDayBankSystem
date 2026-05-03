@@ -8,7 +8,6 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { faCreditCard } from '@fortawesome/free-solid-svg-icons'
-
 import { Line } from 'react-chartjs-2'
 import revenue from '../data/revenue.json'
 import {
@@ -28,6 +27,8 @@ import ExitModel from '../Modals/ExitModal/ExitModal'
 import  visaLogo  from '../image/visa-logo.png'
 import defaultUserLogo from '../image/default-user-logo.png'
 import SendMoneyModal from '../Modals/SendMoneyModal/SendMoneyModal'
+import boltLogo from '../image/bolt.png'
+import type { RecentTransactionResponse } from '../types/transaction.interface'
 
 ChartJS.register(
   CategoryScale,
@@ -50,6 +51,8 @@ const Dashboard = () => {
   const [error, setError] = useState<string>()
   const [userCardNumberForDecrypt, setUserCardNumberForDecrypt] = useState<string>('')
   const [cardNumberInTheBankScreen, setCardNumberInTheBankScreen] = useState<string | number>()
+  const [userRecentTransaction, setUserRecentTransaction] = useState<any | null | string>()
+  const [userId, setUserId] = useState<number>()
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -62,11 +65,11 @@ const Dashboard = () => {
   useEffect( () => {
     const init = async () => {
 
-
       const auth = await isAuthorized()
 
       if (auth) {
         await decryptCardNumber(auth.cardNumber)
+        await recentTransaction()
       }
     }
     init()
@@ -121,7 +124,7 @@ const Dashboard = () => {
 
       setUserCardNumberForDecrypt(cardNumber)
       setCurrentSumAccount(currSum)
-      
+      setUserId(response.data.id)
       setUserName(response.data)
       return response.data
     } catch(error: any) {
@@ -148,8 +151,8 @@ const Dashboard = () => {
           'Content-Type': 'application/json'
         }
       })
-      const currentSum = response.data.balance
-      currentSum === undefined ? setCurrentSumAccount(0) : currentSum
+      const currentSum = response.data.sender.balance
+      currentSum === undefined ? setCurrentSumAccount(0) : setCurrentSumAccount(currentSum)
       setProcess(response.data.message) 
       return response.data
     } catch(error: any) {
@@ -178,6 +181,31 @@ const Dashboard = () => {
       return response.data
     } catch(error: any) {
         throw new Error('failed in decrypt')
+    }
+  }
+
+  const recentTransaction = async () => {
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      const response = await axios.get(import.meta.env.VITE_RECENT_TRANSACTIONS, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      
+       {response.data.message 
+        ?
+        setUserRecentTransaction(response.data.message)
+        :
+        setUserRecentTransaction(response.data)
+       }
+
+      return response.data
+    } catch(error: any) {
+      throw new Error('Failed recent transaction')      
     }
   }
 
@@ -345,9 +373,41 @@ const Dashboard = () => {
                       <p>View All</p>
                       <li style={{listStyle: 'none'}}><FontAwesomeIcon icon={faAngleRight} className='faArrowRight'/></li>
 
-                    </div>
-
+                    
                   </div>
+                  </div>
+                      <ul className='listsOfRecentTransactions'>
+                          {
+                           typeof userRecentTransaction !== 'string'
+                           ? 
+                           userRecentTransaction?.lastRecords.map((user: any) => { 
+                          
+                             const [data] = user.recipient.createdAt.split('T')
+                             const whoIsUser = user.recipient.id !== userId
+                            const kindOfTransfer = whoIsUser ? user?.recipientLastFour : user?.senderLastFour
+
+                            const userFullName = whoIsUser 
+                              ? `To ${user?.recipient.firstName} ${user?.recipient.surName}`
+                              : `Got from ${user?.sender.firstName} ${user?.sender.surName}`
+                            
+                            return ( <li className='listOfRecentTransactions' key={user.id}>
+                                <div className='recentTransactionsBlockAboutUser'>
+                                  <img src={boltLogo} alt='here' className='recentTransactionsImage'></img>
+                                  <p className='userRecentTransactionsFullName'>{userFullName}</p>
+                                </div>
+                                  <p className='recentTransactionsTime'>{data}</p>
+                                  <p className='recentTransactionsCard'>****{kindOfTransfer}</p>
+
+                                  <p>{whoIsUser? '-' : '+'}${user.sum}</p>
+                                  <p className='recentTransactionStatusOfTheOperation'>status</p>
+
+                                </li>)
+                                })
+                                : <p className='notifyUserAboutNoTransactionsYet'>{userRecentTransaction}</p>
+                               }
+                        
+                        
+                      </ul>
                 </div>
            
             </div>
