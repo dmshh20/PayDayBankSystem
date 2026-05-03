@@ -26,5 +26,8 @@ interface Transaction {
 
 export interface RecentTransactionResponse {
   recentTransaction: Transaction[]
-  knownLastFourNumbers: string
+  knownLastFourNumbersOfRecipient: string
+  knownLastFourNumbersOfSender: string
 }
+
+

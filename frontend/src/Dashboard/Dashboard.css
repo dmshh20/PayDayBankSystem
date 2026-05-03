@@ -409,15 +409,14 @@
     margin-top: 10px;
 }
 .listOfRecentTransactions {
-    display: flex;
-    gap: 90px;
+    display: grid;
+    grid-template-columns: 250px 120px 100px 100px 1fr;
+    gap: 20px; 
     text-align: left;
     align-items: center;
     margin-bottom: 10px;
 }
-.listOfRecentTransactionsInside {
-    
-}
+
 .recentTransactionsImage {
     width: 35px;
     height: 35px;
@@ -429,6 +428,7 @@
     align-items: center;
     gap: 10px;
 }
+
 .recentTransactionStatusOfTheOperation {
     width: 66px;
     border-radius: 12px;
@@ -444,4 +444,7 @@
     text-align: center;
     font-size: 18px;
     margin-top: 50px;
+}
+.userRecentTransactionsFullName {
+    font-size: 17px;
 }

@@ -75,44 +75,47 @@ export class TransferService {
             const recentTransaction = await this.prisma.loggingTransaction.findMany({
                 take: 5,
                 where: {
-                   OR: [
-                    {
-                        recipientId: senderId,
-                    },
-                    {senderId},
-                ]
-                }, orderBy: {
-                    createdAt: 'desc'
-                }
+                   OR: [{recipientId: senderId},{senderId},]
+                }, orderBy: { createdAt: 'desc' }
                 , include: {
                     sender: {
-                        select: {
-                            firstName: true,
-                            surName: true,
+                        select: { firstName: true, surName: true, cardNumber: true,
                         }
                     },
                     recipient: {
-                        select: {
-                            id: true,
-                            cardNumber: true,
-                            firstName: true,
-                            surName: true,
-                            createdAt: true
+                        select: { id: true, cardNumber: true, firstName: true, surName: true, createdAt: true
                         }
                     }
-                    
                 }
             })
 
+            
              if (recentTransaction.length < 1 || recentTransaction === undefined) {
                 return {message: 'have no transactions yet'}
-
             }
-            const recipientCardNumber = {cardNumber: recentTransaction[0]?.recipient?.cardNumber}
-            const getUserDecryptCard = await this.encryptService.decryptCardNumber(recipientCardNumber)
-            const knownLastFourNumbers = getUserDecryptCard.slice(12,16)
+            
+            const lastRecords = await Promise.all(
+                recentTransaction.map(async (record: any) => {
 
-            return {recentTransaction, knownLastFourNumbers }
+                const decryptRecipient = await this.encryptService.decryptCardNumber(
+                    {cardNumber: record.recipient?.cardNumber})
+
+
+                const decryptSender = await this.encryptService.decryptCardNumber(
+                    {cardNumber: record.sender?.cardNumber})
+
+
+                    return {
+                        ...record,
+                        recipientLastFour: decryptRecipient.slice(-4),
+                        senderLastFour: decryptSender.slice(-4)
+                    }
+
+                })
+            )
+
+
+            return {lastRecords}
         } catch(error: any) {
             throw new Error('Failed in RecentTransactions function')            
         }

@@ -195,7 +195,7 @@ const Dashboard = () => {
         }
       })
 
-
+      
        {response.data.message 
         ?
         setUserRecentTransaction(response.data.message)
@@ -374,28 +374,31 @@ const Dashboard = () => {
                       <li style={{listStyle: 'none'}}><FontAwesomeIcon icon={faAngleRight} className='faArrowRight'/></li>
 
                     
-
                   </div>
                   </div>
                       <ul className='listsOfRecentTransactions'>
                           {
                            typeof userRecentTransaction !== 'string'
                            ? 
-                           userRecentTransaction?.recentTransaction.map((user: any) => { 
+                           userRecentTransaction?.lastRecords.map((user: any) => { 
                           
-                            const transactionTime = user.recipient.createdAt.split('T')
-                            const [data, time] = transactionTime
-                            const kindOfTransfer = user.recipient.id
-                            const userFullName = `${user?.recipient.firstName} ${user?.recipient.surName}`
+                             const [data] = user.recipient.createdAt.split('T')
+                             const whoIsUser = user.recipient.id !== userId
+                            const kindOfTransfer = whoIsUser ? user?.recipientLastFour : user?.senderLastFour
+
+                            const userFullName = whoIsUser 
+                              ? `To ${user?.recipient.firstName} ${user?.recipient.surName}`
+                              : `Got from ${user?.sender.firstName} ${user?.sender.surName}`
                             
                             return ( <li className='listOfRecentTransactions' key={user.id}>
                                 <div className='recentTransactionsBlockAboutUser'>
                                   <img src={boltLogo} alt='here' className='recentTransactionsImage'></img>
-                                  <p>{kindOfTransfer !== userId ? userFullName : `Got from ${user?.sender.firstName} ${user?.sender.surName}`}</p>
+                                  <p className='userRecentTransactionsFullName'>{userFullName}</p>
                                 </div>
                                   <p className='recentTransactionsTime'>{data}</p>
-                                  <p className='recentTransactionsCard'>****{userRecentTransaction?.knownLastFourNumbers}</p>
-                                  <p>{kindOfTransfer !== userId ? '-' : '+'}${user.sum}</p>
+                                  <p className='recentTransactionsCard'>****{kindOfTransfer}</p>
+
+                                  <p>{whoIsUser? '-' : '+'}${user.sum}</p>
                                   <p className='recentTransactionStatusOfTheOperation'>status</p>
 
                                 </li>)
