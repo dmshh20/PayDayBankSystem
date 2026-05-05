@@ -29,6 +29,10 @@ import defaultUserLogo from '../image/default-user-logo.png'
 import SendMoneyModal from '../Modals/SendMoneyModal/SendMoneyModal'
 import boltLogo from '../image/bolt.png'
 import type { RecentTransactionResponse } from '../types/transaction.interface'
+import TransactionsItem from '../components/Transaction/TransactionsItem'
+import TransactionHelper from '../components/Transaction/TransactionHelper'
+import { formatCardNumber } from '../utils/cardFormatter'
+import { useDashboard } from '../utils/useDashboard'
 
 ChartJS.register(
   CategoryScale,
@@ -51,8 +55,9 @@ const Dashboard = () => {
   const [error, setError] = useState<string>()
   const [userCardNumberForDecrypt, setUserCardNumberForDecrypt] = useState<string>('')
   const [cardNumberInTheBankScreen, setCardNumberInTheBankScreen] = useState<string | number>()
-  const [userRecentTransaction, setUserRecentTransaction] = useState<any | null | string>()
+  // const [userRecentTransaction, setUserRecentTransaction] = useState<RecentTransactionResponse | null>()
   const [userId, setUserId] = useState<number>()
+  const { userBankAccount, currentUserSum, userRecentTransaction, refresh} = useDashboard()
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -68,8 +73,8 @@ const Dashboard = () => {
       const auth = await isAuthorized()
 
       if (auth) {
-        await decryptCardNumber(auth.cardNumber)
-        await recentTransaction()
+        // await decryptCardNumber(auth.cardNumber)
+        // await recentTransaction()
       }
     }
     init()
@@ -84,22 +89,6 @@ const Dashboard = () => {
       setProcess('')
     }
   }, [isSendMoneyModalOpen])
-
-
-  function handleCardNumber(cardNumber: any) {
-   let cn = String(cardNumber).replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim()
-   
-   setCardNumberInTheBankScreen(cn)
-   
-  }
-
-  function enteringCardNumber(card: string) {
-    if (card != null) {
-      card = card.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim()
-        } 
-    
-    return card;
-  }
 
 
   const handleButtons = () => {
@@ -162,52 +151,53 @@ const Dashboard = () => {
     }
   }
  
-  const decryptCardNumber = async (decryptedCardNumber: string) => {
-    try {
-        const token = localStorage.getItem('accessToken')
-        if (!token) {
-          throw new Error('token is not valid')
-        }
-        const response = await axios.post(import.meta.env.VITE_DECRYPT, 
-        {cardNumber: decryptedCardNumber},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      )
-      handleCardNumber(response.data)
-      return response.data
-    } catch(error: any) {
-        throw new Error('failed in decrypt')
-    }
-  }
+  // const decryptCardNumber = async (decryptedCardNumber: string) => {
+  //   try {
+  //       const token = localStorage.getItem('accessToken')
+  //       if (!token) {
+  //         throw new Error('token is not valid')
+  //       }
+  //       const response = await axios.post(import.meta.env.VITE_DECRYPT, 
+  //       {cardNumber: decryptedCardNumber},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           'Content-Type': 'application/json'
+  //         }
+  //       }
+  //     )
+  //     const formatted = formatCardNumber(response.data)
+  //     setCardNumberInTheBankScreen(formatted)
+  //     return response.data
+  //   } catch(error: any) {
+  //       throw new Error('failed in decrypt')
+  //   }
+  // }
 
-  const recentTransaction = async () => {
-    try {
-      const token = localStorage.getItem('accessToken')
+  // const recentTransaction = async () => {
+  //   try {
+  //     const token = localStorage.getItem('accessToken')
       
-      const response = await axios.get(import.meta.env.VITE_RECENT_TRANSACTIONS, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
+  //     const response = await axios.get(import.meta.env.VITE_RECENT_TRANSACTIONS, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     })
 
       
-       {response.data.message 
-        ?
-        setUserRecentTransaction(response.data.message)
-        :
-        setUserRecentTransaction(response.data)
-       }
+  //      {response.data.message 
+  //       ?
+  //       setUserRecentTransaction(response.data.message)
+  //       :
+  //       setUserRecentTransaction(response.data)
+  //      }
 
-      return response.data
-    } catch(error: any) {
-      throw new Error('Failed recent transaction')      
-    }
-  }
+  //     return response.data
+  //   } catch(error: any) {
+  //     throw new Error('Failed recent transaction')      
+  //   }
+  // }
 
   return (
     <section className='dashboard'>
@@ -238,7 +228,7 @@ const Dashboard = () => {
                   </NavLink>
               </div>
             </div> </ExitModel>}
-
+  
         <h1 className='myCard'>My Card</h1>
         <div className='dashboardSection'>
             <div className='userInfo'>
@@ -247,7 +237,7 @@ const Dashboard = () => {
                         <p>Name</p>
                         <h4>{userName?.firstName} {userName?.surName}</h4>
                     </div>  
-                    <p className='userCardNumber'>{cardNumberInTheBankScreen}</p>
+                    <p className='userCardNumber'>{userBankAccount}</p>
                 </div>
 
                 <div className='transfer'>
@@ -307,7 +297,7 @@ const Dashboard = () => {
                       placeholder='1234 5678 9123 4567' 
                       className='cardNumberInput'
                       value={cardNumber}
-                      onChange={(e) => setCardNumber(enteringCardNumber(e.target.value))}
+                      onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                       maxLength={19}
                       />
                     </div>
@@ -380,28 +370,23 @@ const Dashboard = () => {
                           {
                            typeof userRecentTransaction !== 'string'
                            ? 
-                           userRecentTransaction?.lastRecords.map((user: any) => { 
+                           userRecentTransaction?.lastRecords.map((record: any) => { 
+                             const [date] = record.createdAt.split('T')
+
+                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userId})
+
+                            return ( 
                           
-                             const [data] = user.recipient.createdAt.split('T')
-                             const whoIsUser = user.recipient.id !== userId
-                            const kindOfTransfer = whoIsUser ? user?.recipientLastFour : user?.senderLastFour
+                            <TransactionsItem
+                              date={date}
+                              boltLogo={boltLogo}
+                              fullName={fullName}
+                              kindOfTransfer={kindOfTransfer}
+                              amount={amount}
+                              key={record.id}
+                            />
 
-                            const userFullName = whoIsUser 
-                              ? `To ${user?.recipient.firstName} ${user?.recipient.surName}`
-                              : `Got from ${user?.sender.firstName} ${user?.sender.surName}`
-                            
-                            return ( <li className='listOfRecentTransactions' key={user.id}>
-                                <div className='recentTransactionsBlockAboutUser'>
-                                  <img src={boltLogo} alt='here' className='recentTransactionsImage'></img>
-                                  <p className='userRecentTransactionsFullName'>{userFullName}</p>
-                                </div>
-                                  <p className='recentTransactionsTime'>{data}</p>
-                                  <p className='recentTransactionsCard'>****{kindOfTransfer}</p>
-
-                                  <p>{whoIsUser? '-' : '+'}${user.sum}</p>
-                                  <p className='recentTransactionStatusOfTheOperation'>status</p>
-
-                                </li>)
+                                )
                                 })
                                 : <p className='notifyUserAboutNoTransactionsYet'>{userRecentTransaction}</p>
                                }
@@ -417,5 +402,5 @@ const Dashboard = () => {
     </section>
   )
 }
-
+// 438
 export default Dashboard

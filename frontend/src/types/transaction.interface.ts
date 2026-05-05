@@ -10,7 +10,7 @@ interface SenderResponse {
   surName: string
 }
 
-interface Transaction {
+export interface Transaction {
   id: number
   method: string
   recipient: RecipientResponse
@@ -25,9 +25,8 @@ interface Transaction {
 }
 
 export interface RecentTransactionResponse {
-  recentTransaction: Transaction[]
-  knownLastFourNumbersOfRecipient: string
-  knownLastFourNumbersOfSender: string
+  // recentTransaction: Transaction[]
+  lastRecords: []
 }
 
 
