@@ -49,16 +49,15 @@ const Dashboard = () => {
   const [cardNumber, setCardNumber] = useState('');
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
-  const [error, setError] = useState<string>()
   const { userBankAccount, currentUserSum, userRecentTransaction, refresh, userId, userName } = useDashboard()
+  const { handleCardNumberSubmit, process, error, currentSumAccount, resetMessages } = useSubmitTransfer(refresh)
   
   hiddenScroll()
   
   useEffect(() => {
     if (!isSendMoneyModalOpen) {
       setCardNumber('')
-      setError('')
-      // setProcess('')
+      resetMessages()
     }
   }, [isSendMoneyModalOpen])
 
@@ -71,11 +70,9 @@ const Dashboard = () => {
     localStorage.removeItem('accessToken')
   }
 
-  const { handleCardNumberSubmit, process, currentSumAccount } = useSubmitTransfer(refresh)
-  console.log('checking', currentSumAccount);
-  
   const handeSubmitTransfer = () => {
     handleCardNumberSubmit(cardNumber, String(sumTransfer))
+
   }
   
 
