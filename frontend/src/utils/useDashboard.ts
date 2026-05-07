@@ -8,6 +8,8 @@ export const useDashboard =  () => {
     const [currentUserSum, setCurrentUserSum] = useState<number>(0)
     const [userRecentTransaction, setUserRecentTransaction] = useState<RecentTransactionResponse | null>()
     const [loading, setLoading] = useState<boolean>(false)
+    const [userId, setUserId] = useState<number>()
+    const [userName, setUserName] = useState<any>()
 
     const token = localStorage.getItem('accessToken')
         
@@ -26,6 +28,8 @@ export const useDashboard =  () => {
                 }
             })
             setCurrentUserSum(userResponse.data.balance)
+            setUserId(userResponse.data.id)
+            setUserName(userResponse.data) 
 
             const decryptResponse = await axios.post(import.meta.env.VITE_DECRYPT, 
                 {cardNumber: userResponse.data.cardNumber},
@@ -62,6 +66,8 @@ export const useDashboard =  () => {
         userBankAccount,
         currentUserSum,
         userRecentTransaction,
+        userId,
+        userName,
         loading,
         refresh: fetchDashboardData
     }

@@ -6,12 +6,11 @@ interface TransactionsItemProps {
     date: string
     kindOfTransfer: string
     amount: string
-    key: number
 }
 
-const TransactionsItem = ({boltLogo, fullName, date, kindOfTransfer, amount, key}: TransactionsItemProps) => {
+const TransactionsItem = ({boltLogo, fullName, date, kindOfTransfer, amount}: TransactionsItemProps) => {
   return ( 
-        <li className='listOfRecentTransactions' key={key}>
+        <li className='listOfRecentTransactions' >
             <div className='recentTransactionsBlockAboutUser'>
                 <img src={boltLogo} alt='here' className='recentTransactionsImage'></img>
                 <p className='userRecentTransactionsFullName'>{fullName}</p>
