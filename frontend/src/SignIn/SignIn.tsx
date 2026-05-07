@@ -31,9 +31,13 @@ const SignIn = ()=> {
                 navigate('/')
             }
             
-        } catch(error) {
-            setError('Credentials incorrect')
-            throw new Error('Failed in Sign in')
+        }  catch(error: unknown) {
+            if (typeof error === 'string') {
+                setError(error?.toUpperCase())
+            } else if (axios.isAxiosError(error)) {
+                setError(error.response?.data?.message || 'Server Error')
+            }
+            setError('Something went wrong') 
         }
     }
 

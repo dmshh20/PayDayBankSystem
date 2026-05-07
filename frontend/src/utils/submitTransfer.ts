@@ -44,7 +44,6 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
         } catch(error: any) {
             console.log(error);
             if (error.status === 400) {
-                console.log('here');
                 setError('Insuffient funds')
             }
         }

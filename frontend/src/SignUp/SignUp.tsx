@@ -37,10 +37,13 @@ const SignUp = ()=> {
                 navigate('/signin')
             }
 
-        } catch(error: any) {
-            setError(error.message)
-            throw new Error('Failed in Sign up')            
-        }
+        } catch(error: unknown) {
+            if (typeof error === 'string') {
+                setError(error?.toUpperCase())
+            } else if (axios.isAxiosError(error)) {
+                setError(error.response?.data?.message || 'Server Error')
+            }
+            setError('Something went wrong') }
     }
 
    

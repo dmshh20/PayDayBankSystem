@@ -1,6 +1,11 @@
-import React from 'react'
+import type { Transaction } from '../../types/transaction.interface'
 
-export const TransactionHelper = ({record, userId}: any) => {
+interface TransactionHelperProps {
+  record: Transaction
+  userId: number | undefined
+}
+
+export const TransactionHelper = ({record, userId}: TransactionHelperProps) => {
     const whoIsUser = record.recipient.id !== userId
 
   return {

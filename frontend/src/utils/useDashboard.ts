@@ -1,23 +1,21 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import type { RecentTransactionResponse } from "../types/transaction.interface";
+import type {  RecentTransactionResponse } from "../types/transaction.interface";
 import { formatCardNumber } from "./cardFormatter";
+import type { DashBoardUserFullNameDisplay } from "../types/dashboard.interface";
 
 export const useDashboard =  () => {
     const [userBankAccount, setUserBankAccount] = useState<string | number>()
     const [currentUserSum, setCurrentUserSum] = useState<number>(0)
     const [userRecentTransaction, setUserRecentTransaction] = useState<RecentTransactionResponse | null>()
-    const [loading, setLoading] = useState<boolean>(false)
     const [userId, setUserId] = useState<number>()
-    const [userName, setUserName] = useState<any>()
-
+    const [userName, setUserName] = useState<DashBoardUserFullNameDisplay>()
     const token = localStorage.getItem('accessToken')
-        
+    const [error, setError] = useState<string>()
 
         const fetchDashboardData = async () => {
         if (!token) return;
 
-        setLoading(true)
                 
         try {
 
@@ -51,11 +49,14 @@ export const useDashboard =  () => {
             })
             setUserRecentTransaction(recentTransactionsResponse.data.message || recentTransactionsResponse.data)
 
-        } catch(error: any) {
-            console.log(error);
-        } finally {
-            setLoading(false)
-        }
+        } catch(error: unknown) {
+            if (typeof error === 'string') {
+                setError(error?.toUpperCase())
+            } else if (axios.isAxiosError(error)) {
+                setError(error.response?.data?.message || 'Server Error')
+            }
+            setError('Something went wrong')
+        } 
         }
 
     useEffect(() => {
@@ -68,7 +69,6 @@ export const useDashboard =  () => {
         userRecentTransaction,
         userId,
         userName,
-        loading,
         refresh: fetchDashboardData
     }
 
