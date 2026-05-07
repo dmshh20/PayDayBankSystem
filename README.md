@@ -45,7 +45,7 @@ A modern, full-stack banking system built with **NestJS**, **React**, **TypeScri
 - **Dashboard**
   - User profile display
   - Revenue analytics with Chart.js
-  - Transaction visualization
+  - Transaction visualization (recent transactions showing sender/recipient names, transfer amounts with +/- indicators, dates, and last four digits of card numbers)
   - User account overview
   - Real-time balance display
   - Automatic data refresh on load

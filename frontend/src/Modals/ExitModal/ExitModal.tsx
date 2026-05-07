@@ -1,23 +1,15 @@
-import { useEffect, type Dispatch, type ReactNode, type SetStateAction } from 'react'
+import { type Dispatch, type ReactNode, type SetStateAction } from 'react'
 import './ExitModal.css'
+import { hiddenScroll } from '../../utils/hiddenScroll'
 
 interface ExitProps {
   children: ReactNode
   setIsModalOpen: Dispatch<SetStateAction<boolean>>
 }
 
-
 const ExitModal = ({children,setIsModalOpen}: ExitProps) => {
+  hiddenScroll()
 
-  useEffect(() => {
-      document.body.style.overflow = 'hidden' 
-
-    return () => {
-      document.body.style.overflow ? 'hidden' : 'unset'
-    }
-  }, [])
-
-  
   return (
     <>
       <div className='exitModal' onClick={() => setIsModalOpen(false)}>

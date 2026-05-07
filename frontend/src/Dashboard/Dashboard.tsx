@@ -8,7 +8,6 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { faCreditCard } from '@fortawesome/free-solid-svg-icons'
-
 import { Line } from 'react-chartjs-2'
 import revenue from '../data/revenue.json'
 import {
@@ -23,11 +22,18 @@ import {
 } from 'chart.js'
 import { Link, NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import ExitModel from '../Modals/ExitModal/ExitModal'
 import  visaLogo  from '../image/visa-logo.png'
 import defaultUserLogo from '../image/default-user-logo.png'
 import SendMoneyModal from '../Modals/SendMoneyModal/SendMoneyModal'
+import boltLogo from '../image/bolt.png'
+import TransactionsItem from '../components/Transaction/TransactionsItem'
+import TransactionHelper from '../components/Transaction/TransactionHelper'
+import { formatCardNumber } from '../utils/cardFormatter'
+import { useDashboard } from '../utils/useDashboard'
+import { hiddenScroll } from '../utils/hiddenScroll'
+import { useSubmitTransfer } from '../utils/submitTransfer'
+import type { Transaction } from '../types/transaction.interface'
 
 ChartJS.register(
   CategoryScale,
@@ -40,63 +46,21 @@ ChartJS.register(
 )
 
 const Dashboard = () => {
-  const [currentSumAccount, setCurrentSumAccount] = useState<number>(0)
   const [sumTransfer, setSumTransfer] = useState<string>()
   const [cardNumber, setCardNumber] = useState('');
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
-  const [userName, setUserName] = useState<[] | any>(null)
-  const [process, setProcess] = useState<string>('')
-  const [error, setError] = useState<string>()
-  const [userCardNumberForDecrypt, setUserCardNumberForDecrypt] = useState<string>('')
-  const [cardNumberInTheBankScreen, setCardNumberInTheBankScreen] = useState<string | number>()
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-
-    return () => {
-      document.body.style.overflow ? 'hidden' : 'unset'
-    }
-    }, [])
+  const { userBankAccount, currentUserSum, userRecentTransaction, refresh, userId, userName } = useDashboard()
+  const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
   
-  useEffect( () => {
-    const init = async () => {
-
-
-      const auth = await isAuthorized()
-
-      if (auth) {
-        await decryptCardNumber(auth.cardNumber)
-      }
-    }
-    init()
-
-  }, [userCardNumberForDecrypt])
+  hiddenScroll()
   
-
   useEffect(() => {
     if (!isSendMoneyModalOpen) {
       setCardNumber('')
-      setError('')
-      setProcess('')
+      resetMessages()
     }
   }, [isSendMoneyModalOpen])
-
-
-  function handleCardNumber(cardNumber: any) {
-   let cn = String(cardNumber).replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim()
-   
-   setCardNumberInTheBankScreen(cn)
-   
-  }
-
-  function enteringCardNumber(card: string) {
-    if (card != null) {
-      card = card.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim()
-        } 
-    
-    return card;
-  }
 
 
   const handleButtons = () => {
@@ -107,79 +71,11 @@ const Dashboard = () => {
     localStorage.removeItem('accessToken')
   }
 
-   const isAuthorized = async () => {
-    try {
-      const token = localStorage.getItem('accessToken')
-      const response = await axios.get(import.meta.env.VITE_ME, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'          
-        }
-      })
-      const cardNumber = response.data.cardNumber
-      const currSum = response.data.balance
+  const handeSubmitTransfer = () => {
+    handleCardNumberSubmit(cardNumber, String(sumTransfer))
 
-      setUserCardNumberForDecrypt(cardNumber)
-      setCurrentSumAccount(currSum)
-      
-      setUserName(response.data)
-      return response.data
-    } catch(error: any) {
-      throw new Error('Failed in getting user data')
-    }
   }
-
-  const handleCardNumberSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('accessToken')
-      if (!token) {
-        throw new Error('token is not valid')
-      }
-      
-      const body = {
-        cardNumber,
-        sum: Number(sumTransfer)
-      }
-      
-      const response = await axios.post(import.meta.env.VITE_TRANSFER, body , {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      const currentSum = response.data.balance
-      currentSum === undefined ? setCurrentSumAccount(0) : currentSum
-      setProcess(response.data.message) 
-      return response.data
-    } catch(error: any) {
-      if (error.response.status === 400) {
-        setError('Insuffienct funds')        
-      }
-    }
-  }
- 
-  const decryptCardNumber = async (decryptedCardNumber: string) => {
-    try {
-        const token = localStorage.getItem('accessToken')
-        if (!token) {
-          throw new Error('token is not valid')
-        }
-        const response = await axios.post(import.meta.env.VITE_DECRYPT, 
-        {cardNumber: decryptedCardNumber},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      )
-      handleCardNumber(response.data)
-      return response.data
-    } catch(error: any) {
-        throw new Error('failed in decrypt')
-    }
-  }
+  
 
   return (
     <section className='dashboard'>
@@ -210,7 +106,7 @@ const Dashboard = () => {
                   </NavLink>
               </div>
             </div> </ExitModel>}
-
+  
         <h1 className='myCard'>My Card</h1>
         <div className='dashboardSection'>
             <div className='userInfo'>
@@ -219,7 +115,7 @@ const Dashboard = () => {
                         <p>Name</p>
                         <h4>{userName?.firstName} {userName?.surName}</h4>
                     </div>  
-                    <p className='userCardNumber'>{cardNumberInTheBankScreen}</p>
+                    <p className='userCardNumber'>{userBankAccount}</p>
                 </div>
 
                 <div className='transfer'>
@@ -230,7 +126,14 @@ const Dashboard = () => {
                         <p className='bankName'>Visa Card</p>
                       </div>
                       <div className='currentSumOfTheCurrentBank'>
-                        <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>{currentSumAccount}</p>
+                        {/* <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>{currentUserSum}</p> */}
+                        <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>
+                          {
+                currentUserSum === undefined ? 0 : currentUserSum
+
+                          }
+                        </p>
+
                        <FontAwesomeIcon icon={faAngleDown} className='faAngleDown'/>
                       </div>
                     </div>
@@ -279,12 +182,12 @@ const Dashboard = () => {
                       placeholder='1234 5678 9123 4567' 
                       className='cardNumberInput'
                       value={cardNumber}
-                      onChange={(e) => setCardNumber(enteringCardNumber(e.target.value))}
+                      onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                       maxLength={19}
                       />
                     </div>
 
-                      <button onClick={handleCardNumberSubmit} className='handleTransferMoney'>Transfer</button>
+                      <button onClick={handeSubmitTransfer} className='handleTransferMoney'>Transfer</button>
                       <p className='successfulOperation'>{process}</p>
                       <p className='error'>{error}</p>
                   </div>
@@ -345,9 +248,37 @@ const Dashboard = () => {
                       <p>View All</p>
                       <li style={{listStyle: 'none'}}><FontAwesomeIcon icon={faAngleRight} className='faArrowRight'/></li>
 
-                    </div>
-
+                    
                   </div>
+                  </div>
+                      <ul className='listsOfRecentTransactions'>
+                          {
+                           typeof userRecentTransaction !== 'string'
+                           ? 
+                           userRecentTransaction?.lastRecords.map((record: Transaction) => { 
+                             const [date] = record.createdAt.split('T')
+                            
+                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userId})
+                            
+                            return ( 
+                          <>
+                            <TransactionsItem
+                              key={record.id}
+                              date={date}
+                              boltLogo={boltLogo}
+                              fullName={fullName}
+                              kindOfTransfer={kindOfTransfer}
+                              amount={amount}
+                            />
+                          </>
+
+                                )
+                                })
+                                : <p className='notifyUserAboutNoTransactionsYet'>{userRecentTransaction}</p>
+                               }
+                        
+                        
+                      </ul>
                 </div>
            
             </div>
