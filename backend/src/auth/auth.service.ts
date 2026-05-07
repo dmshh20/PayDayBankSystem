@@ -85,7 +85,7 @@ export class AuthService {
             access_token: accessToken
         }
 
-       } catch(error: any) {
+       } catch(error: unknown) {
              if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === "P2001") {
                     throw new BadRequestException('User doesnt exist')
@@ -105,7 +105,7 @@ export class AuthService {
             const {password, ...clearnUser} = existingUser
 
             return clearnUser
-        } catch(error: any) {
+        } catch(error: unknown) {
             throw new InternalServerErrorException('Failed get user information')
             
         }

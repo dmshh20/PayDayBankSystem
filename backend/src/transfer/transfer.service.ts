@@ -62,7 +62,7 @@ export class TransferService {
                 })
                 return {message: "Money was sent successfully", sender}
             })
-        } catch(error: any) {
+        } catch(error: unknown) {
             throw new BadRequestException('Failed during transfer')            
         }
 
@@ -116,7 +116,7 @@ export class TransferService {
 
 
             return {lastRecords}
-        } catch(error: any) {
+        } catch(error: unknown) {
             throw new Error('Failed in RecentTransactions function')            
         }
     }
