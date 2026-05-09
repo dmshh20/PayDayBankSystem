@@ -4,11 +4,19 @@ import { promisify } from 'node:util';
 import { randomInt } from 'node:crypto'
 import { createHmac } from 'node:crypto'
 import { decryptDto } from './dto/decrypt.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EncryptService {
-        private readonly password = process.env.ENCRYPTION_PASSWORD as string
-        private readonly salt = process.env.ENCRYPTION_SALT as string
+    private password;
+    private salt;
+    constructor(private configService: ConfigService) {
+   
+    this.password = this.configService.get('ENCRYPTION_PASSWORD');
+    this.salt = this.configService.get('ENCRYPTION_SALT');
+  }
+        // private readonly password = process.env.ENCRYPTION_PASSWORD as string
+        // private readonly salt = process.env.ENCRYPTION_SALT as string
 
     async encryptCardNumber(cardNumber: string) {
         const iv = randomBytes(16);
