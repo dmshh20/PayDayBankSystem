@@ -14,7 +14,6 @@ describe('Transfer Controller', () => {
             provide: TransferService,
             useValue: {
               transfer: jest.fn().mockResolvedValue({ success: true }),
-                decryptCardNumber: jest.fn()
             }
         }],
       })
@@ -28,8 +27,8 @@ describe('Transfer Controller', () => {
 
   
 
-  describe('Transfer CardNumber' ,() => {
-    it('dd',async () => {
+  describe('Transfer ' ,() => {
+    it('it must have cardnumber and sum',async () => {
         const body = {
             cardNumber: '2141820083383670',
             sum: 1000
@@ -39,10 +38,14 @@ describe('Transfer Controller', () => {
             id: 1
         }
 
+        if (!body.cardNumber && !body.sum) {
+          throw new Error('cardNumber or Sum is undefined')
+        }
 
 
         await transferController.transfer(body, getUser)
        expect(transferService.transfer).toHaveBeenCalledWith(body, getUser)
+       expect(transferController)
     })
   })
  
