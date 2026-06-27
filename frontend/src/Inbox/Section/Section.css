@@ -3,10 +3,17 @@
     padding: 20px;
     width: 250px;
     background-color: rgba(0, 0, 0, 0);
+
 }
 
 .category:hover {
     background-color: rgba(198, 192, 192, 0.1);
     cursor: pointer;
+    /* background-color: lightblue; */
 
+
+}
+.activeSection {
+    color: #0177fb;
+    border-bottom: 4px solid lightblue;
 }

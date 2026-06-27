@@ -1,0 +1,16 @@
+.inboxMessage {
+    display: flex;
+    align-items: center;
+}
+.selectAndTitle {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-right: 200px;
+}
+.sectionMessagesSection {
+    margin-top: 20px;
+}
+.sectionMessagesSectionActive {
+    display: none;
+}

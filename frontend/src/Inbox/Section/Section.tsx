@@ -1,18 +1,18 @@
-import React from 'react'
 import './Section.css'
 
 interface SectionData {
   category: string
+  isActive: boolean
 }
 
-const Section = ({category}: SectionData) => {
+const Section = ({category, isActive}: SectionData) => {
   return (
     <section>
         <div>
           <img src="#" alt="" />
-          <h1 className='category'>{category}</h1>
+           <h1 className={isActive ? 'category activeSection' : 'category'}>{category}</h1>
+           
         </div>          
-
     </section>
   )
 }
