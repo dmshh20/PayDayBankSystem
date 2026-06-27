@@ -1,0 +1,14 @@
+.inbox {
+
+}
+.inbox-main-message {
+  margin-left: 600px;
+  margin-top: 20px;
+}
+.categories {
+    margin-left: 280px;
+    margin-top: 90px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+}

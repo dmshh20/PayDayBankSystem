@@ -1,0 +1,12 @@
+.category {
+    font-weight: 400;
+    padding: 20px;
+    width: 250px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.category:hover {
+    background-color: rgba(198, 192, 192, 0.1);
+    cursor: pointer;
+
+}
