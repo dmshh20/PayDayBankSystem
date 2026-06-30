@@ -3,7 +3,13 @@
     align-items: center;
     border: 1px solid lightgray;
     padding: 4px;
+    cursor: pointer;
 }
+.inboxMessage:hover {
+    border: 1px solid gray;
+
+}
+
 .selectAndTitle {
     display: flex;
     align-items: center;
@@ -16,5 +22,7 @@
 }
 .sectionMessagesSectionActive {
     display: none;
+}
+.sectionMessagesSectionActive:hover {
 
 }

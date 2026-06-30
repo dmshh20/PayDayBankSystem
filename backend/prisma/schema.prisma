@@ -45,11 +45,7 @@ model Inbox {
   topic            String
   message          String
   type             Int
+  mailId           String
 
   userInbox    User @relation("GetInbox", fields: [userId], references: [id]) 
-}
-
-enum Types {
-    PRIMARY
-    BILLS
 }
