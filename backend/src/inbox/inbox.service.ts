@@ -4,12 +4,9 @@ import { inboxDto } from './dto/inbox.dto';
 @Injectable()
 export class InboxService {
     constructor(private prisma: PrismaService) {
-
     }
 
-
   async sendInboxMessage(dto: inboxDto) {
-    console.log('work here')
     return this.prisma.inbox.create({
         data: {
             id: dto.id,
@@ -20,4 +17,16 @@ export class InboxService {
         }
     })
   }
+
+  async filterCategories(type: any) {
+    const messages = await this.prisma.inbox.findMany({
+       where: {
+        type: Number(type)
+       }
+    })
+
+
+    return messages
+  }
+
 }
