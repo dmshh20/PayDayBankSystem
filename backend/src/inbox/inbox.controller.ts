@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { InboxService } from './inbox.service';
 import { inboxDto } from './dto/inbox.dto';
 
@@ -12,7 +12,7 @@ export class InboxController {
   }
   
   @Get('/categories')
-  async filterCategories(@Query('type') type: any) {
+  async filterCategories(@Query('type', ParseIntPipe) type: number) {
     return this.inboxService.filterCategories(type)
   }
 }

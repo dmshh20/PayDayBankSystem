@@ -9,5 +9,6 @@ export interface InboxMessagesData {
     topic: string
     message: string
     type: number
+    mailId: string
 }
  

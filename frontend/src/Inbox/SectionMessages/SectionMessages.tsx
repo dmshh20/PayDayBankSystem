@@ -3,17 +3,16 @@ import type { InboxMessagesData, SectionMessagesData } from './interfaces/Sectio
 import { filterInboxMessagesByTopic } from './SectionMessages.api'
 
 
-
 const SectionMessages = ({isActive, category}: SectionMessagesData) => {
-    const { inboxMessages } = filterInboxMessagesByTopic(category)
-    // filterInboxMessagesByTopic(category)
+    const { inboxMessages, openingLetter } = filterInboxMessagesByTopic(category)
+
 
   return (
     <>
     <div>
         {inboxMessages.map((item: InboxMessagesData) => (
             <div key={item.id} className={!isActive ? 'sectionMessagesSection sectionMessagesSectionActive' : ''} >
-                <div className='inboxMessage' >
+                <div className='inboxMessage' onClick={() => openingLetter(item.mailId)}>
                     <div className='selectAndTitle'>
                         <p className='selectButton'>[]</p>
                         <p>{item.topic}</p>

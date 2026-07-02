@@ -1,7 +1,10 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
-export const filterInboxMessagesByTopic = (category: any) => {
+export const filterInboxMessagesByTopic = (category: number) => {
+    const navigate =  useNavigate()
+
     const [inboxMessages, setInboxMessages] = useState([])
     
      useEffect(() => {
@@ -25,8 +28,13 @@ export const filterInboxMessagesByTopic = (category: any) => {
         }
 
 
+    function openingLetter(mailId: any) {
+        navigate(`/inbox/${mailId}`)  
+    }
+
         return {
-            inboxMessages
+            inboxMessages,
+            openingLetter
         }
 }
 
