@@ -25,7 +25,7 @@ const App = () => {
         <Route path='/wallets' element='' />
         <Route path='/help' element='' />
         <Route path='/settings' element='' />
-        <Route path='/inbox/:id' element={<InboxLetter></InboxLetter>}></Route>
+        <Route path='/inbox/:mailId' element={<InboxLetter></InboxLetter>}></Route>
      </Route>
 
         <Route path='/signup' element={<SignUp></SignUp>} />

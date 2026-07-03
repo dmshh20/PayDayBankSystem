@@ -43,4 +43,12 @@ export class InboxService {
     return messages
   }
 
+  async findLetterUsingMailId(mailId: string) {
+     const messages = await this.prisma.inbox.findFirst({
+       where: {
+        mailId: mailId
+       }
+    })
+        return messages
+    }
 }

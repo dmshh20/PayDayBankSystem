@@ -3,7 +3,6 @@ import './Inbox.css'
 import Section from './Section/Section'
 import SectionMessages from './SectionMessages/SectionMessages'
 
-
 const Inbox = () => {
     const [activeSection, setActiveSection] = useState<string>('PRIMARY')
 
@@ -25,6 +24,7 @@ const Inbox = () => {
         <div className='inbox-content'>
             <SectionMessages category={0}  isActive={activeSection === 'PRIMARY'}></SectionMessages>
             <SectionMessages category={1} isActive={activeSection === 'BILLS'}></SectionMessages>
+
         </div>
     </section>
   )

@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom"
 
 export const filterInboxMessagesByTopic = (category: number) => {
     const navigate =  useNavigate()
-
     const [inboxMessages, setInboxMessages] = useState([])
-    
+
+
      useEffect(() => {
             filterMessages(category)
         }, [category])
@@ -26,15 +26,15 @@ export const filterInboxMessagesByTopic = (category: number) => {
             })
             setInboxMessages(messages.data)    
         }
+    
 
-
-    function openingLetter(mailId: any) {
-        navigate(`/inbox/${mailId}`)  
+    function openingLetter(mailId: string) {
+        navigate(`/inbox/${mailId}`)
     }
-
+    
         return {
             inboxMessages,
-            openingLetter
+            openingLetter,
         }
 }
 

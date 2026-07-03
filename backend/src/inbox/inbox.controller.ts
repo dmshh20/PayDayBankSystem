@@ -15,4 +15,9 @@ export class InboxController {
   async filterCategories(@Query('type', ParseIntPipe) type: number) {
     return this.inboxService.filterCategories(type)
   }
+
+  @Get('/letter')
+  async findLetterUsingMailId(@Query('type') type: string) {
+    return this.inboxService.findLetterUsingMailId(type)
+  } 
 }
