@@ -17,7 +17,7 @@ const SectionMessages = ({isActive, category}: SectionMessagesData) => {
                         <p className='selectButton'>[]</p>
                         <p>{item.topic}</p>
                     </div>
-                    <p>{item.message}</p>
+                    <p>{item.message.slice(0, 90)}</p>
 
                 </div>
             </div>            
