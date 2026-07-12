@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { inboxDto } from './dto/inbox.dto';
 import { log } from 'node:console';
@@ -32,7 +32,7 @@ export class InboxService {
     })
   }
 
-  async filterCategories(type: number, userId: any) {
+  async filterCategories(type: number, userId: number) {
     const messages = await this.prisma.inbox.findMany({
        where: {
         type: type
@@ -42,12 +42,17 @@ export class InboxService {
     return messages.filter((record) => record.userId === userId)
   }
 
-  async findLetterUsingMailId(mailId: string) {
+  async findLetterUsingMailId(mailId: string, userId: number) {    
      const messages = await this.prisma.inbox.findFirst({
        where: {
         mailId: mailId
        }
     })
+    const messageOwner = messages?.userId !== userId
+    if (messageOwner) {
+         throw new InternalServerErrorException('not available')
+    }
+    
         return messages
     }
 }

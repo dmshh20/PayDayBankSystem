@@ -2,16 +2,17 @@ import { useParams } from 'react-router-dom'
 import './InboxLetter.css'
 import { useEffect, useState } from 'react'
 import { InboxLetterFindByMailId } from './InboxLetter.api'
+import type { LetterData } from './InboxLetterInterface'
 
 const InboxLetter = () => {
   const { mailId } = useParams<{mailId: string}>()
-  const [letter, setLetter] = useState()
+  const [letterData, setLetterData] = useState<LetterData>()
 
   useEffect(() => {
     
     const gettingLetter = async () => {
       const data = await InboxLetterFindByMailId(mailId)
-      setLetter(data.message)
+      setLetterData(data)
     }
     gettingLetter()
 
@@ -23,10 +24,10 @@ const InboxLetter = () => {
    <section>
     <div className='aboutUser'>
       <img src="#" alt="" />
-        <div className='usernicknameFromWhom'>barclays@myworkday.com </div>
+        <div className='usernicknameFromWhom'>{letterData?.topic}</div>
 
         <div className='mainMessage'>
-          {letter}
+          {letterData?.message}
         </div>
     </div>
 
