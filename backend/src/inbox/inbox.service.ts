@@ -32,15 +32,14 @@ export class InboxService {
     })
   }
 
-  async filterCategories(type: number) {
+  async filterCategories(type: number, userId: any) {
     const messages = await this.prisma.inbox.findMany({
        where: {
         type: type
        }
     })
 
-
-    return messages
+    return messages.filter((record) => record.userId === userId)
   }
 
   async findLetterUsingMailId(mailId: string) {
