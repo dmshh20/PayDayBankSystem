@@ -18,6 +18,7 @@ export class AuthService {
 
     async signUp(body: SignUpDto) {
        try {
+            console.log('here is an error',body);
             
          const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
 
@@ -105,14 +106,15 @@ export class AuthService {
 
     async userMe(user: getUserDto) {
         try {
-            const existingUser = await this.prisma.user.findUnique({where: {id: user.id}})
+            const existingUser = await this.prisma.user.findUnique({where: {id: user.id}, include: { userWallet: true}})
+            
             if (!existingUser) {
                 throw Error('')
             }
            
-            const {password, ...clearnUser} = existingUser
+            const {userWallet, ...clearnUser} = existingUser
 
-            return clearnUser
+            return existingUser
         } catch(error: unknown) {
             throw new InternalServerErrorException('Failed get user information')
             

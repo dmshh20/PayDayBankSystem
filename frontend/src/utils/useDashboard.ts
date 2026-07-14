@@ -25,12 +25,13 @@ export const useDashboard =  () => {
                 'Content-Type': 'application/json'          
                 }
             })
-            setCurrentUserSum(userResponse.data.balance)
+                    
+            setCurrentUserSum(userResponse.data.userWallet[0].balance)
             setUserId(userResponse.data.id)
             setUserName(userResponse.data) 
-
+            
             const decryptResponse = await axios.post(import.meta.env.VITE_DECRYPT, 
-                {cardNumber: userResponse.data.cardNumber},
+                {cardNumber: userResponse.data.userWallet[0]?.cardNumber},
                 {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -38,6 +39,7 @@ export const useDashboard =  () => {
                 }
                 }
             )
+            console.log('works here but not here');
             
             setUserBankAccount(formatCardNumber(decryptResponse.data))
         
