@@ -24,7 +24,7 @@ const InboxLetter = () => {
    <section>
     <div className='aboutUser'>
       <img src="#" alt="" />
-        <div className='usernicknameFromWhom'>{letterData?.topic}</div>
+        <div className='usernicknameFromWhom'>• {letterData?.topic}</div>
 
         <div className='mainMessage'>
           {letterData?.message}
