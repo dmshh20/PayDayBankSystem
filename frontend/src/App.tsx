@@ -4,6 +4,8 @@ import Layout from './Layout/Layout'
 import SignUp from './SignUp/SignUp'
 import SignIn from './SignIn/SignIn'
 import ProtectedRoutes from './routes/ProtectedRoutes'
+import Inbox from './Inbox/Inbox'
+import InboxLetter from './Inbox/InboxLetter/InboxLetter'
 
 const App = () => {
   return (
@@ -19,10 +21,11 @@ const App = () => {
             </ProtectedRoutes>}>
 
         <Route index element={<Dashboard></Dashboard>}/>
-        <Route path='/inbox' element='' />
+        <Route path='/inbox' element={<Inbox></Inbox>} />
         <Route path='/wallets' element='' />
         <Route path='/help' element='' />
         <Route path='/settings' element='' />
+        <Route path='/inbox/:mailId' element={<InboxLetter></InboxLetter>}></Route>
      </Route>
 
         <Route path='/signup' element={<SignUp></SignUp>} />

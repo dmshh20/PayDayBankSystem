@@ -21,6 +21,7 @@ model User {
 
   getSender    LoggingTransaction[] @relation("GetSender")
   getRecipient LoggingTransaction[] @relation("GetRecipient")
+  getInbox     Inbox[]  @relation("GetInbox")
 } 
 
 model LoggingTransaction {
@@ -36,4 +37,15 @@ model LoggingTransaction {
 
   sender    User @relation("GetSender", fields: [senderId], references: [id])
   recipient User @relation("GetRecipient",fields: [recipientId], references: [id])
+}
+
+model Inbox {
+  id               Int         @id @default(autoincrement())
+  userId           Int
+  topic            String
+  message          String
+  type             Int
+  mailId           String
+
+  userInbox    User @relation("GetInbox", fields: [userId], references: [id]) 
 }

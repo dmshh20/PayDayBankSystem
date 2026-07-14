@@ -1,0 +1,28 @@
+.inboxMessage {
+    display: flex;
+    align-items: center;
+    border: 1px solid lightgray;
+    padding: 4px;
+    cursor: pointer;
+}
+.inboxMessage:hover {
+    border: 1px solid gray;
+
+}
+
+.selectAndTitle {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 300px;
+    flex-shrink: 0;
+}
+.sectionMessagesSection {
+    /* margin-top: 10px; */
+}
+.sectionMessagesSectionActive {
+    display: none;
+}
+.sectionMessagesSectionActive:hover {
+
+}
