@@ -18,7 +18,7 @@ export class TransferService {
 
             const hashCurrentCardNumber = await this.encryptService.hashingBlindIndex(currentCardNumber)
             
-            const existingCardNumber = await this.prisma.user.findUnique({where: {cardIndex: hashCurrentCardNumber}})
+            const existingCardNumber = await this.prisma.wallet.findUnique({where: {cardIndex: hashCurrentCardNumber}})
             const existingSender = await this.prisma.user.findUnique({where: {id: user.id}})
              
             if (!existingCardNumber || !existingSender) {
@@ -27,7 +27,7 @@ export class TransferService {
 
             
             return await this.prisma.$transaction(async () => {
-                const existingEnoughMoney = await this.prisma.user.findUnique({
+                const existingEnoughMoney = await this.prisma.wallet.findUnique({
                     where: {
                         id: existingSender.id
                     }
@@ -51,7 +51,7 @@ export class TransferService {
                     }
                 })
                 
-                await this.prisma.user.update({
+                await this.prisma.wallet.update({
                     where: {
                         cardIndex: existingCardNumber.cardIndex
                     }, data: {

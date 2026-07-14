@@ -31,7 +31,7 @@ export class LoggingInterceptor implements NestInterceptor {
             const { statusCode } = response
 
             const recipientId = await this.encryptService.hashingBlindIndex(getCardNumber)
-            const existingCardNumber = await this.prisma.user.findUnique({
+            const existingCardNumber = await this.prisma.wallet.findUnique({
                 where: { cardIndex: String(recipientId)}})
             
             if (!existingCardNumber) {

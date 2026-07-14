@@ -12,16 +12,15 @@ model User {
   firstName     String
   surName       String
   email         String   @unique
-  cardNumber    String   @unique
-  cardIndex     String   @unique
+ 
   password      String
-  balance       Float    @default(0)
   createdAt     DateTime   @default(now()) 
   updatedAt     DateTime   @updatedAt
 
   getSender    LoggingTransaction[] @relation("GetSender")
   getRecipient LoggingTransaction[] @relation("GetRecipient")
   getInbox     Inbox[]  @relation("GetInbox")
+  userWallet   Wallet[]
 } 
 
 model LoggingTransaction {
@@ -48,4 +47,16 @@ model Inbox {
   mailId           String
 
   userInbox    User @relation("GetInbox", fields: [userId], references: [id]) 
+}
+
+model Wallet {
+  id            Int     @id @default(autoincrement())
+  userId        Int
+  cardNumber    String   @unique
+  cardIndex     String   @unique
+  balance       Float    @default(0)
+  createdAt     DateTime   @default(now()) 
+  updatedAt     DateTime   @updatedAt
+
+  userWallet   User     @relation(fields: [userId], references: [id])
 }
