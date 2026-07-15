@@ -39,7 +39,6 @@ export const useDashboard =  () => {
                 }
                 }
             )
-            console.log('works here but not here');
             
             setUserBankAccount(formatCardNumber(decryptResponse.data))
         

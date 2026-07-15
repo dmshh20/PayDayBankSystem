@@ -11,8 +11,8 @@ export const TransactionHelper = ({record, userId}: TransactionHelperProps) => {
   return {
     fullName: 
     whoIsUser 
-        ? `To ${record?.recipient.firstName} ${record?.recipient.surName}`
-        : `Got from ${record?.sender.firstName} ${record?.sender.surName}`,
+        ? `To ${record?.recipient.userWallet.firstName} ${record?.recipient.userWallet.surName}`
+        : `Got from ${record?.sender.userWallet.firstName} ${record?.sender.userWallet.surName}`,
     kindOfTransfer: whoIsUser ? record?.recipientLastFour : record?.senderLastFour,
     amount: `${whoIsUser? '-' : '+'}$${record.sum}`
   }

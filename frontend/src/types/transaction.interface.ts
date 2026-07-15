@@ -3,12 +3,11 @@ interface RecipientResponse {
   id: number
   cardNumber: string
   createdAt: string
-  firstName: string
-  surName: string
+  userWallet: UserWallet
 }
 interface SenderResponse {
-  firstName: string
-  surName: string
+  cardNumber: string
+  userWallet: UserWallet
 }
 
 export interface Transaction {
@@ -31,6 +30,11 @@ export interface Transaction {
 export interface RecentTransactionResponse {
   // recentTransaction: Transaction[]
   lastRecords: []
+}
+
+export interface UserWallet {
+  firstName: string
+  surName: string
 }
 
 

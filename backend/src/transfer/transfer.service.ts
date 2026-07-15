@@ -29,7 +29,7 @@ export class TransferService {
             return await this.prisma.$transaction(async () => {
                 const existingEnoughMoney = await this.prisma.wallet.findUnique({
                     where: {
-                        id: existingSender.id
+                        userId: existingSender.id
                     }
                 })
                 
@@ -40,9 +40,9 @@ export class TransferService {
                     throw new BadRequestException("Insufficient funds")
                  }
                  
-                const sender = await this.prisma.user.update({
+                const sender = await this.prisma.wallet.update({
                     where: {
-                        id: existingSender.id
+                        userId: existingSender.id
                     },
                     data: {
                         balance: {
@@ -79,16 +79,25 @@ export class TransferService {
                 }, orderBy: { createdAt: 'desc' }
                 , include: {
                     sender: {
-                        select: { firstName: true, surName: true, cardNumber: true,
+                        
+                        select: {cardNumber: true,
+                            userWallet: {
+                                select: {
+                                  firstName: true, surName: true,
+                                }
+                            }
                         }
                     },
                     recipient: {
-                        select: { id: true, cardNumber: true, firstName: true, surName: true, createdAt: true
+                        select: { id: true, cardNumber: true,  createdAt: true,
+                        userWallet: {
+                            select: {
+                                firstName: true, surName: true
+                            }
                         }
-                    }
+                    }}
                 }
             })
-
             
              if (recentTransaction.length < 1 || recentTransaction === undefined) {
                 return {message: 'have no transactions yet'}

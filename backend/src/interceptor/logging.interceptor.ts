@@ -22,15 +22,16 @@ export class LoggingInterceptor implements NestInterceptor {
 
     
     const getCardNumber = String(cardNumber).replace(/\s+/g, '')
-
+        
     const now = Date.now();
     return next
       .handle()
       .pipe(
         tap(async () => {
             const { statusCode } = response
-
+            
             const recipientId = await this.encryptService.hashingBlindIndex(getCardNumber)
+            
             const existingCardNumber = await this.prisma.wallet.findUnique({
                 where: { cardIndex: String(recipientId)}})
             
@@ -41,7 +42,7 @@ export class LoggingInterceptor implements NestInterceptor {
                 await this.prisma.loggingTransaction.create({
                     data: {
                         senderId,
-                        recipientId: Number(existingCardNumber.id),
+                        recipientId: Number(existingCardNumber.userId),
                         url,
                         method,
                         statusCode,
@@ -49,6 +50,7 @@ export class LoggingInterceptor implements NestInterceptor {
                     }
                 })
             }
+
         console.log(`${Date.now() - now}ms`)
 
         }
