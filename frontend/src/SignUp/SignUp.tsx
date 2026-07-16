@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import EUR from '../image/eur.svg'
 
 const SignUp = ()=> {
     const [error, setError] = useState('')
@@ -13,7 +14,8 @@ const SignUp = ()=> {
         surName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        currency: ''
     })
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +76,15 @@ const SignUp = ()=> {
                   <div className='signUpField'>
                     <label htmlFor="confirmPassword">Confirm Password</label>
                     <input id="confirmPassword" type="password" name="confirmPassword" value={values.confirmPassword} onChange={handleOnChange}/>
+                </div>
+                <div className='signUpField'>
+                    <label htmlFor="cardCurrency">Card Currency</label>
+                    <input id="cardCurrency" type="text" name="currency" value={values.currency} onChange={handleOnChange} list='currencyOptions'/>
+
+                    <datalist id="currencyOptions">
+                        <option value="USD">🇺🇸 USD - US Dollar</option>
+                        <option value="EUR">🇪🇺 EUR - Euro</option>
+                    </datalist>
                 </div>
                 </div>
 

@@ -53,6 +53,7 @@ model Wallet {
   userId        Int     @unique
   cardNumber    String   @unique
   cardIndex     String   @unique
+  currency      String
   balance       Float    @default(0)
   createdAt     DateTime   @default(now()) 
   updatedAt     DateTime   @updatedAt

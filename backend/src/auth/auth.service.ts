@@ -18,8 +18,6 @@ export class AuthService {
 
     async signUp(body: SignUpDto) {
        try {
-            console.log('here is an error',body);
-            
          const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
 
         if (existingUser) {
@@ -45,7 +43,8 @@ export class AuthService {
                 create: {
                     cardNumber: hashedCard,
                     cardIndex: hashedBlindIndex,
-                    balance: 0
+                    balance: 0,
+                    currency: body.currency
                 }
              }
             },
