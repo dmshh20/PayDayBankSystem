@@ -24,6 +24,14 @@
 .userCardName p {
     font-size: 14px;
 }
+.userCardName {
+    display: flex;
+    justify-content: space-between;
+}
+.userCurrency {
+    font-weight: 600;
+    cursor: pointer;
+}
 .userCardName h4 {
     font-family: "Open Sans", sans-serif;
     font-optical-sizing: auto;

@@ -2,14 +2,33 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import type {  RecentTransactionResponse } from "../types/transaction.interface";
 import { formatCardNumber } from "./cardFormatter";
-import type { DashBoardUserFullNameDisplay } from "../types/dashboard.interface";
+
+export interface userProfileData {
+    id: number
+    firstName: string
+    surName: string
+    email: string
+    password: string
+    createdAt: Date
+    updatedAt: Date
+    userWallet: UserWalletData
+}
+
+export interface UserWalletData {
+    id: number
+    userId: number
+    cardNumber: string
+    cardIndex: string
+    currency: string
+    balance: number
+    createdAt: Date
+    updatedAt: Date
+}
 
 export const useDashboard =  () => {
+    const [userProfile, setUserProfile] = useState<userProfileData | any>()
     const [userBankAccount, setUserBankAccount] = useState<string | number>()
-    const [currentUserSum, setCurrentUserSum] = useState<number>(0)
     const [userRecentTransaction, setUserRecentTransaction] = useState<RecentTransactionResponse | null>()
-    const [userId, setUserId] = useState<number>()
-    const [userName, setUserName] = useState<DashBoardUserFullNameDisplay>()
     const token = localStorage.getItem('accessToken')
     const [error, setError] = useState<string>()
 
@@ -25,10 +44,7 @@ export const useDashboard =  () => {
                 'Content-Type': 'application/json'          
                 }
             })
-                    
-            setCurrentUserSum(userResponse.data.userWallet[0].balance)
-            setUserId(userResponse.data.id)
-            setUserName(userResponse.data) 
+            setUserProfile(userResponse.data) 
             
             const decryptResponse = await axios.post(import.meta.env.VITE_DECRYPT, 
                 {cardNumber: userResponse.data.userWallet[0]?.cardNumber},
@@ -65,11 +81,9 @@ export const useDashboard =  () => {
     }, [])
 
     return {
+        userProfile,
         userBankAccount,
-        currentUserSum,
         userRecentTransaction,
-        userId,
-        userName,
         refresh: fetchDashboardData
     }
 

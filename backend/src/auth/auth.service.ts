@@ -112,7 +112,7 @@ export class AuthService {
             }
            
             const {userWallet, ...clearnUser} = existingUser
-
+            
             return existingUser
         } catch(error: unknown) {
             throw new InternalServerErrorException('Failed get user information')
