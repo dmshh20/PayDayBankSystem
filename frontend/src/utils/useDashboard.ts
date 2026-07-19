@@ -2,28 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import type {  RecentTransactionResponse } from "../types/transaction.interface";
 import { formatCardNumber } from "./cardFormatter";
-
-export interface userProfileData {
-    id: number
-    firstName: string
-    surName: string
-    email: string
-    password: string
-    createdAt: Date
-    updatedAt: Date
-    userWallet: UserWalletData
-}
-
-export interface UserWalletData {
-    id: number
-    userId: number
-    cardNumber: string
-    cardIndex: string
-    currency: string
-    balance: number
-    createdAt: Date
-    updatedAt: Date
-}
+import type { userProfileData } from "../types/userProfileInterface";
 
 export const useDashboard =  () => {
     const [userProfile, setUserProfile] = useState<userProfileData | any>()
