@@ -3,6 +3,7 @@ import { transferDto } from './dto/transfer.dto';
 import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { getUserDto } from 'src/auth/decorator/getUser.dto';
+import { Prisma } from 'generated/prisma/client';
 
 @Injectable()
 export class TransferService {
@@ -12,7 +13,6 @@ export class TransferService {
     ) {}
 
     async transfer(body: transferDto, user: getUserDto) {
-        try {
             let currentSum = body.sum
             let currentCardNumber = body.cardNumber.replace(/\D/g,'');
 
@@ -24,7 +24,6 @@ export class TransferService {
             if (!existingCardNumber || !existingSender) {
                 throw new BadRequestException('Card or User is not found')
             }
-
             
             return await this.prisma.$transaction(async () => {
                 const existingEnoughMoney = await this.prisma.wallet.findFirst({
@@ -62,14 +61,9 @@ export class TransferService {
                 })
                 return {message: "Money was sent successfully", sender}
             })
-        } catch(error: unknown) {
-            throw new BadRequestException('Failed during transfer')            
-        }
-
     }
 
     async recentTransaction(user: getUserDto) {
-        try {
             const senderId = user.id
             
             const recentTransaction = await this.prisma.loggingTransaction.findMany({
@@ -123,10 +117,9 @@ export class TransferService {
                 })
             )
 
+            if (!lastRecords) {
+                throw new BadRequestException('Failed to get recent record transactions')
+            }
 
-            return {lastRecords}
-        } catch(error: unknown) {
-            throw new Error('Failed in RecentTransactions function')            
-        }
     }
 }
