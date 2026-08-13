@@ -24,7 +24,7 @@ model User {
 
 model LoggingTransaction {
   id            Int      @id @default(autoincrement())
-  senderId      Int
+  senderId      Int 
   recipientId   Int
   url           String
   method        String
@@ -33,8 +33,8 @@ model LoggingTransaction {
   createdAt     DateTime   @default(now()) 
   updatedAt     DateTime   @updatedAt
 
-  sender    Wallet @relation("GetSender", fields: [senderId], references: [userId])
-  recipient Wallet @relation("GetRecipient",fields: [recipientId], references: [userId])
+  sender    Wallet @relation("GetSender", fields: [senderId], references: [id])
+  recipient Wallet @relation("GetRecipient",fields: [recipientId], references: [id])
 }
 
 model Inbox {
@@ -50,7 +50,7 @@ model Inbox {
 
 model Wallet {
   id            Int     @id @default(autoincrement())
-  userId        Int     @unique
+  userId        Int     
   cardNumber    String   @unique
   cardIndex     String   @unique
   currency      String

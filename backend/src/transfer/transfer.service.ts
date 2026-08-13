@@ -27,7 +27,7 @@ export class TransferService {
 
             
             return await this.prisma.$transaction(async () => {
-                const existingEnoughMoney = await this.prisma.wallet.findUnique({
+                const existingEnoughMoney = await this.prisma.wallet.findFirst({
                     where: {
                         userId: existingSender.id
                     }
@@ -40,7 +40,7 @@ export class TransferService {
                     throw new BadRequestException("Insufficient funds")
                  }
                  
-                const sender = await this.prisma.wallet.update({
+                const sender = await this.prisma.wallet.updateMany({
                     where: {
                         userId: existingSender.id
                     },

@@ -1,0 +1,63 @@
+.wallets {
+    text-align: center;
+}
+.wallets-title {
+    margin-top: 40px;
+    font-weight: 400;
+}
+.wallets-cards {
+    display: flex;
+    justify-content: center;
+}
+.userWallet {
+    color: #f2f2f2;
+    width: 260px;
+    height: 140px;
+    background-color: #0177fb;
+    border-radius: 20px;
+    padding: 20px;
+    font-size: 16px;
+}
+.userWalletBlock {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+}
+.userCurrency {
+    margin-bottom: 30px;
+}
+.userBalance b {
+    margin-right: 3px;
+}
+
+.openingNewCard {
+    margin-top: 80px;
+    margin-bottom: 50px;
+}
+.openCardBtn {
+    padding: 10px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    background-color: lightgreen;
+    border: 1px solid green;
+}
+.openCardBtn:hover {
+    background-color: green;
+    transition-duration: 0.3s;
+}
+.openWalletScreenChooseCurrency {
+    width: 400px;
+    height: 300px;
+    background-color: white;
+}
+.currencyList {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+.currency {
+    padding: 2px;
+    background-color: lightgray;
+    cursor: pointer;
+}
