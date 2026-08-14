@@ -7,12 +7,13 @@ import { ConfigModule } from '@nestjs/config';
 import { EncryptModule } from './encrypt/encrypt.module';
 import { TransferModule } from './transfer/transfer.module';
 import { InboxModule } from './inbox/inbox.module';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
   imports: [AuthModule, PrismaModule, 
     ConfigModule.forRoot({
     isGlobal: true
-  }), EncryptModule, TransferModule, InboxModule],
+  }), EncryptModule, TransferModule, InboxModule, WalletModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { SignUpDto } from './dto/SignUp.dto';
 import * as bcrypt from 'bcrypt';
 import { SignInDto } from './dto/SignIn.dto';
@@ -17,8 +17,6 @@ export class AuthService {
     ) {}
 
     async signUp(body: SignUpDto) {
-       try {
-        
          const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
 
         if (existingUser) {
@@ -32,6 +30,7 @@ export class AuthService {
         
         const hashedPassword = await this.hashPassword(body.password)
         const hashedBlindIndex = await this.encryptService.hashingBlindIndex(generatedCard)
+       try {
 
         const createUser = await this.prisma.user.create({
             data: {
@@ -39,24 +38,34 @@ export class AuthService {
                 surName: body.surName,
                 email: body.email,
                 password: hashedPassword,
-                cardNumber: hashedCard,
-                cardIndex: hashedBlindIndex,
-                balance: 0
-            }, select: {
+
+             userWallet: {
+                create: {
+                    cardNumber: hashedCard,
+                    cardIndex: hashedBlindIndex,
+                    balance: 0,
+                    currency: body.currency
+                }
+             }
+            },
+            select: {
+                id: true,
                 firstName: true,
                 surName: true,
                 email: true,
                 createdAt: true
             }
         })
+      
         return createUser
 
-       } catch(error: any) {
+       } catch(error: unknown) {
          if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2002") {
                 throw new BadRequestException('User with this email already exist')
             }
-        }
+        } 
+        
         throw error 
        }
     }
@@ -68,11 +77,10 @@ export class AuthService {
     }
 
     async signIn(body: SignInDto) {
-       try {
          const existingUser = await this.prisma.user.findUnique({where: {email: body.email}})
 
         if (!existingUser) {
-            throw new BadRequestException('User doesnt exist')
+            throw new UnauthorizedException('Invalid email or password')
         }
 
         const isMatch = await bcrypt.compare(body.password, existingUser.password);
@@ -84,31 +92,17 @@ export class AuthService {
         return {
             access_token: accessToken
         }
-
-       } catch(error: unknown) {
-             if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === "P2001") {
-                    throw new BadRequestException('User doesnt exist')
-                }
-            }
-            throw error;
-       }
     }
 
     async userMe(user: getUserDto) {
-        try {
-            const existingUser = await this.prisma.user.findUnique({where: {id: user.id}})
+            const existingUser = await this.prisma.user.findUnique({where: {id: user.id}, include: { userWallet: true}})
             if (!existingUser) {
-                throw Error('')
+                throw new BadRequestException('Failed to get user data')
             }
            
-            const {password, ...clearnUser} = existingUser
-
-            return clearnUser
-        } catch(error: unknown) {
-            throw new InternalServerErrorException('Failed get user information')
-            
-        }
+            const {userWallet, ...clearnUser} = existingUser
+        
+            return existingUser
     }
 
 }

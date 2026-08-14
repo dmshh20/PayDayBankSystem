@@ -16,4 +16,7 @@ export class SignUpDto {
     @IsNotEmpty()
     @IsString()
     password: string
+
+    @IsString()
+    currency: string
 }

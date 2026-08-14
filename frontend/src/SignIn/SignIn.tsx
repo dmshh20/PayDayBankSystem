@@ -32,12 +32,11 @@ const SignIn = ()=> {
             }
             
         }  catch(error: unknown) {
-            if (typeof error === 'string') {
-                setError(error?.toUpperCase())
-            } else if (axios.isAxiosError(error)) {
+            if (axios.isAxiosError(error)) {
                 setError(error.response?.data?.message || 'Server Error')
+            } else {
+                setError('Invalid email or password') 
             }
-            setError('Something went wrong') 
         }
     }
 

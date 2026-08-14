@@ -13,7 +13,8 @@ const SignUp = ()=> {
         surName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        currency: ''
     })
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +26,9 @@ const SignUp = ()=> {
 
         if (values.password !== values.confirmPassword) {
             setError('Password dont match')
+            return
         }
+
         try {
             const response = await axios.post(import.meta.env.VITE_SIGNUP, values, {
                 headers: {
@@ -38,12 +41,11 @@ const SignUp = ()=> {
             }
 
         } catch(error: unknown) {
-            if (typeof error === 'string') {
-                setError(error?.toUpperCase())
-            } else if (axios.isAxiosError(error)) {
+            if (axios.isAxiosError(error)) {
                 setError(error.response?.data?.message || 'Server Error')
-            }
-            setError('Something went wrong') }
+            } else {
+                setError('Invalid user data')
+            }}
     }
 
    
@@ -74,6 +76,15 @@ const SignUp = ()=> {
                   <div className='signUpField'>
                     <label htmlFor="confirmPassword">Confirm Password</label>
                     <input id="confirmPassword" type="password" name="confirmPassword" value={values.confirmPassword} onChange={handleOnChange}/>
+                </div>
+                <div className='signUpField'>
+                    <label htmlFor="cardCurrency">Card Currency</label>
+                    <input id="cardCurrency" type="text" name="currency" value={values.currency} onChange={handleOnChange} list='currencyOptions'/>
+
+                    <datalist id="currencyOptions">
+                        <option value="USD">🇺🇸 USD - US Dollar</option>
+                        <option value="EUR">🇪🇺 EUR - Euro</option>
+                    </datalist>
                 </div>
                 </div>
 

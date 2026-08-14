@@ -6,6 +6,7 @@ import SignIn from './SignIn/SignIn'
 import ProtectedRoutes from './routes/ProtectedRoutes'
 import Inbox from './Inbox/Inbox'
 import InboxLetter from './Inbox/InboxLetter/InboxLetter'
+import Wallets from './components/Wallets/Wallets'
 
 const App = () => {
   return (
@@ -22,7 +23,7 @@ const App = () => {
 
         <Route index element={<Dashboard></Dashboard>}/>
         <Route path='/inbox' element={<Inbox></Inbox>} />
-        <Route path='/wallets' element='' />
+        <Route path='/wallets' element={<Wallets></Wallets>} />
         <Route path='/help' element='' />
         <Route path='/settings' element='' />
         <Route path='/inbox/:mailId' element={<InboxLetter></InboxLetter>}></Route>

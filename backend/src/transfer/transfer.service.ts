@@ -3,6 +3,7 @@ import { transferDto } from './dto/transfer.dto';
 import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { getUserDto } from 'src/auth/decorator/getUser.dto';
+import { Prisma } from 'generated/prisma/client';
 
 @Injectable()
 export class TransferService {
@@ -12,24 +13,22 @@ export class TransferService {
     ) {}
 
     async transfer(body: transferDto, user: getUserDto) {
-        try {
             let currentSum = body.sum
             let currentCardNumber = body.cardNumber.replace(/\D/g,'');
 
             const hashCurrentCardNumber = await this.encryptService.hashingBlindIndex(currentCardNumber)
             
-            const existingCardNumber = await this.prisma.user.findUnique({where: {cardIndex: hashCurrentCardNumber}})
+            const existingCardNumber = await this.prisma.wallet.findUnique({where: {cardIndex: hashCurrentCardNumber}})
             const existingSender = await this.prisma.user.findUnique({where: {id: user.id}})
              
             if (!existingCardNumber || !existingSender) {
                 throw new BadRequestException('Card or User is not found')
             }
-
             
             return await this.prisma.$transaction(async () => {
-                const existingEnoughMoney = await this.prisma.user.findUnique({
+                const existingEnoughMoney = await this.prisma.wallet.findFirst({
                     where: {
-                        id: existingSender.id
+                        userId: existingSender.id
                     }
                 })
                 
@@ -40,9 +39,9 @@ export class TransferService {
                     throw new BadRequestException("Insufficient funds")
                  }
                  
-                const sender = await this.prisma.user.update({
+                const sender = await this.prisma.wallet.updateMany({
                     where: {
-                        id: existingSender.id
+                        userId: existingSender.id
                     },
                     data: {
                         balance: {
@@ -51,7 +50,7 @@ export class TransferService {
                     }
                 })
                 
-                await this.prisma.user.update({
+                await this.prisma.wallet.update({
                     where: {
                         cardIndex: existingCardNumber.cardIndex
                     }, data: {
@@ -62,14 +61,9 @@ export class TransferService {
                 })
                 return {message: "Money was sent successfully", sender}
             })
-        } catch(error: unknown) {
-            throw new BadRequestException('Failed during transfer')            
-        }
-
     }
 
     async recentTransaction(user: getUserDto) {
-        try {
             const senderId = user.id
             
             const recentTransaction = await this.prisma.loggingTransaction.findMany({
@@ -79,16 +73,25 @@ export class TransferService {
                 }, orderBy: { createdAt: 'desc' }
                 , include: {
                     sender: {
-                        select: { firstName: true, surName: true, cardNumber: true,
+                        
+                        select: {cardNumber: true,
+                            userWallet: {
+                                select: {
+                                  firstName: true, surName: true,
+                                }
+                            }
                         }
                     },
                     recipient: {
-                        select: { id: true, cardNumber: true, firstName: true, surName: true, createdAt: true
+                        select: { id: true, cardNumber: true,  createdAt: true,
+                        userWallet: {
+                            select: {
+                                firstName: true, surName: true
+                            }
                         }
-                    }
+                    }}
                 }
             })
-
             
              if (recentTransaction.length < 1 || recentTransaction === undefined) {
                 return {message: 'have no transactions yet'}
@@ -114,10 +117,9 @@ export class TransferService {
                 })
             )
 
+            if (!lastRecords) {
+                throw new BadRequestException('Failed to get recent record transactions')
+            }
 
-            return {lastRecords}
-        } catch(error: unknown) {
-            throw new Error('Failed in RecentTransactions function')            
-        }
     }
 }

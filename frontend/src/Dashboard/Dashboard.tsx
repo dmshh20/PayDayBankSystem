@@ -33,7 +33,6 @@ import { formatCardNumber } from '../utils/cardFormatter'
 import { useDashboard } from '../utils/useDashboard'
 import { hiddenScroll } from '../utils/hiddenScroll'
 import { useSubmitTransfer } from '../utils/submitTransfer'
-import type { Transaction } from '../types/transaction.interface'
 
 ChartJS.register(
   CategoryScale,
@@ -50,9 +49,10 @@ const Dashboard = () => {
   const [cardNumber, setCardNumber] = useState('');
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
-  const { userBankAccount, currentUserSum, userRecentTransaction, refresh, userId, userName } = useDashboard()
+  const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
   const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
-  
+    
+
   hiddenScroll()
   
   useEffect(() => {
@@ -82,13 +82,13 @@ const Dashboard = () => {
         <div className='personalUserInfo'>
           <FontAwesomeIcon icon={faBell} className='faBell'/>
             <div className='myAccount'>
-              {userName === null
+              {userProfile === null
               ?
               <Link to='/signup' className='signUp'>
                  <p className='signUp' >sign up</p>
               </Link>
               :
-              <p className='isAuthorized'>{userName?.firstName}</p>
+              <p className='isAuthorized'>{userProfile?.firstName}</p>
               }
 
               <b className='userProfile' onClick={handleButtons}>exit</b>
@@ -112,8 +112,11 @@ const Dashboard = () => {
             <div className='userInfo'>
                 <div className='userCard'>
                     <div className='userCardName'>
-                        <p>Name</p>
-                        <h4>{userName?.firstName} {userName?.surName}</h4>
+                      <div className='userCardInfo'> 
+                          <p>Name</p>
+                          <h4>{userProfile?.firstName} {userProfile?.surName}</h4>
+                      </div>
+                         <p className='userCurrency'>{userProfile?.userWallet[0].currency}</p>
                     </div>  
                     <p className='userCardNumber'>{userBankAccount}</p>
                 </div>
@@ -126,10 +129,9 @@ const Dashboard = () => {
                         <p className='bankName'>Visa Card</p>
                       </div>
                       <div className='currentSumOfTheCurrentBank'>
-                        {/* <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>{currentUserSum}</p> */}
                         <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>
                           {
-                currentUserSum === undefined ? 0 : currentUserSum
+                userProfile?.userWallet[0].balance === undefined ? 0 : userProfile?.userWallet[0].balance
 
                           }
                         </p>
@@ -255,10 +257,10 @@ const Dashboard = () => {
                           {
                            typeof userRecentTransaction !== 'string'
                            ? 
-                           userRecentTransaction?.lastRecords.map((record: Transaction) => { 
+                           userRecentTransaction?.lastRecords.map((record: any) => { 
                              const [date] = record.createdAt.split('T')
                             
-                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userId})
+                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile})
                             
                             return ( 
                           <>

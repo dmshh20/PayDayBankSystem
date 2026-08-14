@@ -2,14 +2,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import type {  RecentTransactionResponse } from "../types/transaction.interface";
 import { formatCardNumber } from "./cardFormatter";
-import type { DashBoardUserFullNameDisplay } from "../types/dashboard.interface";
+import type { userProfileData } from "../types/userProfileInterface";
 
 export const useDashboard =  () => {
+    const [userProfile, setUserProfile] = useState<userProfileData | any>()
     const [userBankAccount, setUserBankAccount] = useState<string | number>()
-    const [currentUserSum, setCurrentUserSum] = useState<number>(0)
     const [userRecentTransaction, setUserRecentTransaction] = useState<RecentTransactionResponse | null>()
-    const [userId, setUserId] = useState<number>()
-    const [userName, setUserName] = useState<DashBoardUserFullNameDisplay>()
     const token = localStorage.getItem('accessToken')
     const [error, setError] = useState<string>()
 
@@ -25,12 +23,10 @@ export const useDashboard =  () => {
                 'Content-Type': 'application/json'          
                 }
             })
-            setCurrentUserSum(userResponse.data.balance)
-            setUserId(userResponse.data.id)
-            setUserName(userResponse.data) 
-
+            setUserProfile(userResponse.data) 
+            
             const decryptResponse = await axios.post(import.meta.env.VITE_DECRYPT, 
-                {cardNumber: userResponse.data.cardNumber},
+                {cardNumber: userResponse.data.userWallet[0]?.cardNumber},
                 {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -50,12 +46,11 @@ export const useDashboard =  () => {
             setUserRecentTransaction(recentTransactionsResponse.data.message || recentTransactionsResponse.data)
 
         } catch(error: unknown) {
-            if (typeof error === 'string') {
-                setError(error?.toUpperCase())
-            } else if (axios.isAxiosError(error)) {
+            if (axios.isAxiosError(error)) {
                 setError(error.response?.data?.message || 'Server Error')
+            } else {
+                setError('Failed to fetch user data')
             }
-            setError('Something went wrong')
         } 
         }
 
@@ -64,11 +59,9 @@ export const useDashboard =  () => {
     }, [])
 
     return {
+        userProfile,
         userBankAccount,
-        currentUserSum,
         userRecentTransaction,
-        userId,
-        userName,
         refresh: fetchDashboardData
     }
 
