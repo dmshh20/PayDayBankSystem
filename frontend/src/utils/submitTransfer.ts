@@ -22,7 +22,6 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
             }
 
                 
-        try {
              const body = {
                 cardNumber,
                 sum: Number(sumTransfer)
@@ -41,12 +40,6 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
 
             await refreshFromDashboard()
             return response.data
-        } catch(error: any) {
-            console.log(error);
-            if (error.status === 400) {
-                setError('Insuffient funds')
-            }
-        }
     }
   
     return {

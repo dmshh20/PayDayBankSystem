@@ -46,12 +46,11 @@ export const useDashboard =  () => {
             setUserRecentTransaction(recentTransactionsResponse.data.message || recentTransactionsResponse.data)
 
         } catch(error: unknown) {
-            if (typeof error === 'string') {
-                setError(error?.toUpperCase())
-            } else if (axios.isAxiosError(error)) {
+            if (axios.isAxiosError(error)) {
                 setError(error.response?.data?.message || 'Server Error')
+            } else {
+                setError('Failed to fetch user data')
             }
-            setError('Something went wrong')
         } 
         }
 

@@ -22,8 +22,8 @@ export interface WalletDataUserScope {
 const Wallets = () => {
     const [userWallets, setUserWallets] = useState<WalletData | any>([])
     const [error, setError] = useState<string>()
-    const [isOpen, setIsOpen] = useState<boolean>(true)
-            const token = localStorage.getItem('accessToken')
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+    const token = localStorage.getItem('accessToken')
 
     useEffect(() => {
              getUserWallets()

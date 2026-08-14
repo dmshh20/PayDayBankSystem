@@ -2,7 +2,7 @@ import React, { type Dispatch, type SetStateAction } from 'react'
 import './OpenWalletModal.css'
 
 interface OpenWalletModalProps {
-    children: any
+    children: React.ReactNode
     setIsOpen: Dispatch<SetStateAction<boolean>>
     
 }

@@ -29,13 +29,14 @@ export class WalletService {
 
 
     async createNewWallet(userId: number, userNewWallet: string) {
+
         const availabilityUserNewWallet = await this.prisma.wallet.findFirst({
-            where: {userId: userId, currency: userNewWallet}
+            where: {currency: userNewWallet, userId: userId}
         })
         
         if (availabilityUserNewWallet?.currency === userNewWallet) {
             throw new BadRequestException({
-                message: "You have already had this currency wallet"
+                message: 'You have already had this wallet'
             })
         }
 
@@ -43,7 +44,6 @@ export class WalletService {
         const hashedCard = await this.encryptService.encryptCardNumber(generatedCard)
         const hashedBlindIndex = await this.encryptService.hashingBlindIndex(generatedCard)
 
-        try {
             const createNewUserWallet = await this.prisma.wallet.create({
                 data: {
                         cardNumber: hashedCard,
@@ -54,14 +54,11 @@ export class WalletService {
                 }
             })
 
-        return createNewUserWallet
-        } catch(error: unknown) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === "P2002") {
-                    throw new InternalServerErrorException('a user with this credentials already exists')
-                }
+            if (!createNewUserWallet) {
+                throw new BadRequestException('Failed to create New Wallet')
             }
-            throw error
-        }
+
+        return createNewUserWallet
+        
     }
 }

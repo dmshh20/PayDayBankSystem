@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import EUR from '../image/eur.svg'
 
 const SignUp = ()=> {
     const [error, setError] = useState('')
@@ -27,7 +26,9 @@ const SignUp = ()=> {
 
         if (values.password !== values.confirmPassword) {
             setError('Password dont match')
+            return
         }
+
         try {
             const response = await axios.post(import.meta.env.VITE_SIGNUP, values, {
                 headers: {
@@ -40,12 +41,11 @@ const SignUp = ()=> {
             }
 
         } catch(error: unknown) {
-            if (typeof error === 'string') {
-                setError(error?.toUpperCase())
-            } else if (axios.isAxiosError(error)) {
+            if (axios.isAxiosError(error)) {
                 setError(error.response?.data?.message || 'Server Error')
-            }
-            setError('Something went wrong') }
+            } else {
+                setError('Invalid user data')
+            }}
     }
 
    
