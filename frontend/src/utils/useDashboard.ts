@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import type {  RecentTransactionResponse } from "../types/transaction.interface";
+import type {  Transaction } from "../types/transaction.interface";
 import { formatCardNumber } from "./cardFormatter";
 import type { userProfileData } from "../types/userProfileInterface";
 
 export const useDashboard =  () => {
     const [userProfile, setUserProfile] = useState<userProfileData | any>()
     const [userBankAccount, setUserBankAccount] = useState<string | number>()
-    const [userRecentTransaction, setUserRecentTransaction] = useState<RecentTransactionResponse | null>()
+    const [userRecentTransaction, setUserRecentTransaction] = useState<Transaction[] | null>()
     const token = localStorage.getItem('accessToken')
     const [error, setError] = useState<string>()
 
@@ -42,7 +42,8 @@ export const useDashboard =  () => {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
                 }
-            })
+        })
+            
             setUserRecentTransaction(recentTransactionsResponse.data.message || recentTransactionsResponse.data)
 
         } catch(error: unknown) {

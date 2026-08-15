@@ -9,6 +9,7 @@ interface TransactionsItemProps {
 }
 
 const TransactionsItem = ({boltLogo, fullName, date, kindOfTransfer, amount}: TransactionsItemProps) => {
+    
   return ( 
         <li className='listOfRecentTransactions' >
             <div className='recentTransactionsBlockAboutUser'>

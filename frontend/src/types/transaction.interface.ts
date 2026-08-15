@@ -27,10 +27,6 @@ export interface Transaction {
   senderLastFour: string
 }
 
-export interface RecentTransactionResponse {
-  // recentTransaction: Transaction[]
-  lastRecords: []
-}
 
 export interface UserWallet {
   firstName: string

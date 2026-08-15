@@ -33,6 +33,7 @@ import { formatCardNumber } from '../utils/cardFormatter'
 import { useDashboard } from '../utils/useDashboard'
 import { hiddenScroll } from '../utils/hiddenScroll'
 import { useSubmitTransfer } from '../utils/submitTransfer'
+import type { Transaction } from '../types/transaction.interface'
 
 ChartJS.register(
   CategoryScale,
@@ -52,7 +53,7 @@ const Dashboard = () => {
   const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
   const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
     
-
+  
   hiddenScroll()
   
   useEffect(() => {
@@ -257,7 +258,8 @@ const Dashboard = () => {
                           {
                            typeof userRecentTransaction !== 'string'
                            ? 
-                           userRecentTransaction?.lastRecords.map((record: any) => { 
+                           userRecentTransaction?.map((record: Transaction) => { 
+                            
                              const [date] = record.createdAt.split('T')
                             
                             const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile})

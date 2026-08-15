@@ -4,6 +4,7 @@ import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { getUserDto } from 'src/auth/decorator/getUser.dto';
 import { Prisma } from 'generated/prisma/client';
+import { RecentTransactionDto } from './dto/recentTransaction.dto';
 
 @Injectable()
 export class TransferService {
@@ -98,8 +99,9 @@ export class TransferService {
             }
             
             const lastRecords = await Promise.all(
-                recentTransaction.map(async (record: any) => {
-
+                
+                recentTransaction.map(async (record: RecentTransactionDto) => {
+                    
                 const decryptRecipient = await this.encryptService.decryptCardNumber(
                     {cardNumber: record.recipient?.cardNumber})
 
@@ -107,7 +109,7 @@ export class TransferService {
                 const decryptSender = await this.encryptService.decryptCardNumber(
                     {cardNumber: record.sender?.cardNumber})
 
-
+                    
                     return {
                         ...record,
                         recipientLastFour: decryptRecipient.slice(-4),
@@ -116,10 +118,11 @@ export class TransferService {
 
                 })
             )
-
+            
             if (!lastRecords) {
                 throw new BadRequestException('Failed to get recent record transactions')
             }
 
+            return lastRecords
     }
 }
