@@ -3,8 +3,7 @@ import { transferDto } from './dto/transfer.dto';
 import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { getUserDto } from 'src/auth/decorator/getUser.dto';
-import { Prisma } from 'generated/prisma/client';
-import { RecentTransactionDto } from './dto/recentTransaction.dto';
+import { RecentTransactionDto } from './dto/RecentTransactionBK.dto';
 
 @Injectable()
 export class TransferService {
@@ -13,60 +12,87 @@ export class TransferService {
         private  prisma: PrismaService
     ) {}
 
-    async transfer(body: transferDto, user: getUserDto) {
-            let currentSum = body.sum
-            let currentCardNumber = body.cardNumber.replace(/\D/g,'');
+    async transfer(body: any, user: getUserDto) {
+            const existingCardNumber = body.recipientCard
+            const existingSender = body.sender
+            const sumToSend = body.sumToSend
+            const userSender = body.sender
+            // let currentSum = body.sum
+            // let currentCardNumber = body.cardNumber.replace(/\D/g,'');
 
-            const hashCurrentCardNumber = await this.encryptService.hashingBlindIndex(currentCardNumber)
+            // const hashCurrentCardNumber = await this.encryptService.hashingBlindIndex(currentCardNumber)
             
-            const existingCardNumber = await this.prisma.wallet.findUnique({where: {cardIndex: hashCurrentCardNumber}})
-            const existingSender = await this.prisma.user.findUnique({where: {id: user.id}})
-             
-            if (!existingCardNumber || !existingSender) {
-                throw new BadRequestException('Card or User is not found')
-            }
+            // const existingCardNumber = await this.prisma.wallet.findUnique({where: {cardIndex: hashCurrentCardNumber}})
+            // const existingSender = await this.prisma.user.findUnique({where: {id: user.id}})
             
             return await this.prisma.$transaction(async () => {
+
                 const existingEnoughMoney = await this.prisma.wallet.findFirst({
                     where: {
-                        userId: existingSender.id
+                        userId: body.senderId
                     }
                 })
                 
                 if (!existingEnoughMoney) {
                     throw new BadRequestException('User was not found')
                 }
-                if (existingEnoughMoney.balance < currentSum) {
-                    throw new BadRequestException("Insufficient funds")
+                if (existingEnoughMoney.balance < sumToSend) {
+                  throw new BadRequestException("Insufficient funds")
                  }
-                 
-                const sender = await this.prisma.wallet.updateMany({
+                     
+                await this.prisma.wallet.updateMany({
                     where: {
-                        userId: existingSender.id
+                        userId: body.senderId
                     },
                     data: {
                         balance: {
-                            decrement: currentSum
+                            decrement: sumToSend
                         }
                     }
                 })
                 
                 await this.prisma.wallet.update({
                     where: {
-                        cardIndex: existingCardNumber.cardIndex
+                        cardIndex: body.recipientCard
                     }, data: {
                         balance: {
-                            increment: currentSum
+                            increment: sumToSend
                         }
                     }
                 })
-                return {message: "Money was sent successfully", sender}
+                return {message: "Money was sent successfully", userSender}
             })
     }
 
+    async userIdentity(body: transferDto, user: getUserDto) {
+        let sumToSend = body.sum
+        let currentCardNumber = body.cardNumber.replace(/\D/g,'');
+
+        const hashCurrentCardNumber = await this.encryptService.hashingBlindIndex(currentCardNumber)
+            
+        const existingCardNumber = await this.prisma.wallet.findUnique({where: {cardIndex: hashCurrentCardNumber}})
+        const existingSender = await this.prisma.wallet.findUnique({where: {id: user.id}})
+           
+        if (!existingCardNumber || !existingSender) {
+            throw new BadRequestException('Card or User is not found')
+        }
+        const senderBalance = await this.prisma.wallet.findFirst({where: {userId: user.id}})
+        
+        return {
+            sumToSend: sumToSend,
+            sender: existingSender,
+            senderId: existingSender.id,
+            recipientCard: existingCardNumber.cardIndex,
+            recipientCurrency: existingCardNumber.currency,
+            senderCurrency: existingSender.currency,
+            balance: senderBalance?.balance
+        }
+    }
+
+
     async recentTransaction(user: getUserDto) {
             const senderId = user.id
-            
+    
             const recentTransaction = await this.prisma.loggingTransaction.findMany({
                 take: 5,
                 where: {

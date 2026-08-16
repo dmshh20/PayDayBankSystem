@@ -51,7 +51,7 @@ const Dashboard = () => {
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
-  const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
+  const { handleCardNumberSubmit, process, error, resetMessages, transferResponse } = useSubmitTransfer(refresh)
     
   
   hiddenScroll()
@@ -60,6 +60,7 @@ const Dashboard = () => {
     if (!isSendMoneyModalOpen) {
       setCardNumber('')
       resetMessages()
+      setSumTransfer('')
     }
   }, [isSendMoneyModalOpen])
 

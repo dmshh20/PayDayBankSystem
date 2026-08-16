@@ -17,11 +17,12 @@ export class LoggingInterceptor implements NestInterceptor {
     const response = context.switchToHttp().getResponse()
     
     const { url, method } = request
-    const { sum, cardNumber} = request.body
+    const { sumToSend, recipientCard } = request.body
+    
     const senderId = request.user?.id
 
     
-    const getCardNumber = String(cardNumber).replace(/\s+/g, '')
+    const getCardNumber = String(recipientCard).replace(/\s+/g, '')
         
     const now = Date.now();
     return next
@@ -30,10 +31,11 @@ export class LoggingInterceptor implements NestInterceptor {
         tap(async () => {
             const { statusCode } = response
             
-            const recipientId = await this.encryptService.hashingBlindIndex(getCardNumber)
+            // const recipientId = await this.encryptService.hashingBlindIndex(getCardNumber)
+            // console.log('RECIPIENt CHECK', recipientId)
             
             const existingCardNumber = await this.prisma.wallet.findUnique({
-                where: { cardIndex: String(recipientId)}})
+                where: { cardIndex: String(getCardNumber)}})
             
             if (!existingCardNumber) {
                 throw new BadRequestException('User not found')
@@ -46,7 +48,7 @@ export class LoggingInterceptor implements NestInterceptor {
                         url,
                         method,
                         statusCode,
-                        sum
+                        sum: sumToSend
                     }
                 })
             }

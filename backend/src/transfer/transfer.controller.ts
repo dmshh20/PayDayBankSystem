@@ -13,8 +13,14 @@ export class TransferController {
   @UseInterceptors(LoggingInterceptor)
   @UseGuards(JwtGuard)
   @Post('')
-  async transfer(@Body() body: transferDto, @GetUser() user: getUserDto) {
+  async transfer(@Body() body: any, @GetUser() user: getUserDto) {
     return this.transferService.transfer(body, user)
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('/identity')
+  async userIdentity(@Body() body: transferDto, @GetUser() user: getUserDto) {
+    return this.transferService.userIdentity(body, user)
   }
 
   @Get('/recent')
