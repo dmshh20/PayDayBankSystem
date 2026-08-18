@@ -51,7 +51,7 @@ const Dashboard = () => {
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
-  const { handleCardNumberSubmit, process, error, resetMessages, transferResponse } = useSubmitTransfer(refresh)
+  const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
     
   
   hiddenScroll()
@@ -133,7 +133,7 @@ const Dashboard = () => {
                       <div className='currentSumOfTheCurrentBank'>
                         <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>
                           {
-                userProfile?.userWallet[0].balance === undefined ? 0 : userProfile?.userWallet[0].balance
+                userProfile?.userWallet[0].balance.toFixed(2) === undefined ? 0 : userProfile?.userWallet[0].balance.toFixed(2)
 
                           }
                         </p>
