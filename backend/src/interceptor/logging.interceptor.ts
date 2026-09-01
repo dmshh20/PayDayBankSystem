@@ -17,7 +17,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const response = context.switchToHttp().getResponse()
     
     const { url, method } = request
-    const { sumToSend, recipientCard } = request.body
+    const { convertedSum, recipientCard } = request.body
     
     const senderId = request.user?.id
 
@@ -48,7 +48,7 @@ export class LoggingInterceptor implements NestInterceptor {
                         url,
                         method,
                         statusCode,
-                        sum: sumToSend
+                        sum: convertedSum
                     }
                 })
             }

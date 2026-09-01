@@ -15,8 +15,10 @@ export class TransferService {
     async transfer(body: any, user: getUserDto) {
             const existingCardNumber = body.recipientCard
             const existingSender = body.sender
-            const sumToSend = body.sumToSend
+            const convertedSum = Number(body.convertedSum)
+            const sumToDecrement = Number(body.sumToDecrement)
             const userSender = body.sender
+        
             // let currentSum = body.sum
             // let currentCardNumber = body.cardNumber.replace(/\D/g,'');
 
@@ -29,34 +31,35 @@ export class TransferService {
 
                 const existingEnoughMoney = await this.prisma.wallet.findFirst({
                     where: {
-                        userId: body.senderId
+                        userId: user.id
                     }
                 })
                 
                 if (!existingEnoughMoney) {
                     throw new BadRequestException('User was not found')
                 }
-                if (existingEnoughMoney.balance < sumToSend) {
+                if (existingEnoughMoney.balance < sumToDecrement) {
                   throw new BadRequestException("Insufficient funds")
                  }
+
                      
                 await this.prisma.wallet.updateMany({
                     where: {
-                        userId: body.senderId
+                        userId: user.id
                     },
                     data: {
                         balance: {
-                            decrement: sumToSend
+                            decrement: sumToDecrement
                         }
                     }
                 })
-                
+                console.log('recipeintCard', body.recipientCard, convertedSum)
                 await this.prisma.wallet.update({
                     where: {
                         cardIndex: body.recipientCard
                     }, data: {
                         balance: {
-                            increment: sumToSend
+                            increment: convertedSum
                         }
                     }
                 })

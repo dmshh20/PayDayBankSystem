@@ -48,12 +48,11 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
             
             const convertCurrency = await axios.get(
             `https://api.frankfurter.dev/v2/rate/${bodyConvert.senderCurrency}/${bodyConvert.recipientCurrency}`)
-
            
             const amount = recipientInfo.sumToSend * convertCurrency.data.rate
-            
              const bodyTransfer = {
-                sumToSend: amount, 
+                sumToDecrement: recipientInfo.sumToSend,
+                convertedSum: amount, 
                 sender: recipientInfo.sender,
                 recipientCard: recipientInfo.recipientCard,
 
