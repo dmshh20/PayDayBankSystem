@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { transferDto } from './dto/transfer.dto';
+import { transferIdentityDto } from './dto/transferIdentity.dto';
 import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { getUserDto } from 'src/auth/decorator/getUser.dto';
 import { RecentTransactionDto } from './dto/RecentTransactionBK.dto';
+import { transferDto } from './dto/transfer.dto';
 
 @Injectable()
 export class TransferService {
@@ -12,13 +13,11 @@ export class TransferService {
         private  prisma: PrismaService
     ) {}
 
-    async transfer(body: any, user: getUserDto) {
-            const existingCardNumber = body.recipientCard
-            const existingSender = body.sender
+    async transfer(body: transferDto, user: getUserDto) {
+           
             const convertedSum = Number(body.convertedSum)
             const sumToDecrement = Number(body.sumToDecrement)
             const userSender = body.sender
-        
             // let currentSum = body.sum
             // let currentCardNumber = body.cardNumber.replace(/\D/g,'');
 
@@ -27,9 +26,9 @@ export class TransferService {
             // const existingCardNumber = await this.prisma.wallet.findUnique({where: {cardIndex: hashCurrentCardNumber}})
             // const existingSender = await this.prisma.user.findUnique({where: {id: user.id}})
             
-            return await this.prisma.$transaction(async () => {
+            return await this.prisma.$transaction(async (tx) => {
 
-                const existingEnoughMoney = await this.prisma.wallet.findFirst({
+                const existingEnoughMoney = await tx.wallet.findFirst({
                     where: {
                         userId: user.id
                     }
@@ -43,7 +42,7 @@ export class TransferService {
                  }
 
                      
-                await this.prisma.wallet.updateMany({
+                await tx.wallet.updateMany({
                     where: {
                         userId: user.id
                     },
@@ -53,8 +52,8 @@ export class TransferService {
                         }
                     }
                 })
-                console.log('recipeintCard', body.recipientCard, convertedSum)
-                await this.prisma.wallet.update({
+               
+                await tx.wallet.update({
                     where: {
                         cardIndex: body.recipientCard
                     }, data: {
@@ -67,7 +66,7 @@ export class TransferService {
             })
     }
 
-    async userIdentity(body: transferDto, user: getUserDto) {
+    async userIdentity(body: transferIdentityDto, user: getUserDto) {
         let sumToSend = body.sum
         let currentCardNumber = body.cardNumber.replace(/\D/g,'');
 

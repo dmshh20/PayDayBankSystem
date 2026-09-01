@@ -55,7 +55,6 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
                 convertedSum: amount, 
                 sender: recipientInfo.sender,
                 recipientCard: recipientInfo.recipientCard,
-
             }
                 
              const transferResponse = await axios.post(import.meta.env.VITE_TRANSFER, bodyTransfer , {
