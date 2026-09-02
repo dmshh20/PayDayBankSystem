@@ -725,9 +725,32 @@ HASHING_PEPPER=your-hashing-pepper
 ### Frontend (.env)
 
 ```env
+## Frontend (.env)
+
+The frontend expects a set of VITE_ environment variables that point to the backend API endpoints. Example values (for local development):
+
+```env
+# Authentication
 VITE_SIGNUP=http://localhost:3000/auth/signup
 VITE_SIGNIN=http://localhost:3000/auth/signin
-VITE_GET_USER=http://localhost:3000/auth/me
+
+# User / dashboard
+VITE_ME=http://localhost:3000/auth/me
+VITE_DECRYPT=http://localhost:3000/encrypt/decrypt
+VITE_RECENT_TRANSACTIONS=http://localhost:3000/transfer/recent
+
+# Transfer
+VITE_TRANSFER_IDENTITY=http://localhost:3000/transfer/identity
+VITE_TRANSFER=http://localhost:3000/transfer
+
+# Wallets
+VITE_WALLET=http://localhost:3000/wallet
+VITE_WALLET_CREATE=http://localhost:3000/wallet/create
+
+# Inbox
+VITE_INBOX_CATEGORIES=http://localhost:3000/inbox/categories
+VITE_INBOX_LETTER=http://localhost:3000/inbox/letter
+```
 ```
 
 ⚠️ **IMPORTANT:** 
@@ -735,6 +758,14 @@ VITE_GET_USER=http://localhost:3000/auth/me
 - Create `.env.example` with dummy values
 - Use strong, random values in production
 - Change default credentials before deployment
+
+**Developer notes / discrepancies found**
+
+- The frontend code uses `VITE_ME`, `VITE_DECRYPT`, `VITE_RECENT_TRANSACTIONS`, `VITE_TRANSFER_IDENTITY`, `VITE_TRANSFER`, `VITE_WALLET`, `VITE_WALLET_CREATE`, `VITE_INBOX_CATEGORIES`, and `VITE_INBOX_LETTER` in addition to `VITE_SIGNUP` / `VITE_SIGNIN`. Make sure your local `.env` contains all of them (examples above).
+- The README previously listed `VITE_GET_USER` — actual frontend files expect `VITE_ME` (map to `/auth/me`).
+- The backend exposes `/encrypt/decrypt` for decrypting stored card numbers (used by the dashboard).
+- The frontend's `vite-env.d.ts` only declares a subset of these variables; consider adding the missing keys there for TypeScript completeness.
+
 
 ---
 

@@ -4,6 +4,7 @@ interface RecipientResponse {
   cardNumber: string
   createdAt: string
   userWallet: UserWallet
+  currency: string
 }
 interface SenderResponse {
   cardNumber: string
@@ -19,7 +20,7 @@ export interface Transaction {
   sender: SenderResponse
   senderId: number
   statusCode: number
-  sum: number
+  convertedSum: number
   updatedAt: string
   url: string
   user: SenderResponse 
@@ -27,10 +28,6 @@ export interface Transaction {
   senderLastFour: string
 }
 
-export interface RecentTransactionResponse {
-  // recentTransaction: Transaction[]
-  lastRecords: []
-}
 
 export interface UserWallet {
   firstName: string

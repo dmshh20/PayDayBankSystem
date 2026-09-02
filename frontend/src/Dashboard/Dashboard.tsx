@@ -2,6 +2,7 @@ import './Dashboard.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import { faDollar } from '@fortawesome/free-solid-svg-icons'
+import { faEuroSign } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
@@ -33,6 +34,7 @@ import { formatCardNumber } from '../utils/cardFormatter'
 import { useDashboard } from '../utils/useDashboard'
 import { hiddenScroll } from '../utils/hiddenScroll'
 import { useSubmitTransfer } from '../utils/submitTransfer'
+import type { Transaction } from '../types/transaction.interface'
 
 ChartJS.register(
   CategoryScale,
@@ -51,14 +53,15 @@ const Dashboard = () => {
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
   const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
-    
-
+  const userCurrency = userProfile?.userWallet[0].currency === 'USD'    
+  const userBalance =  userProfile?.userWallet[0].balance
   hiddenScroll()
   
   useEffect(() => {
     if (!isSendMoneyModalOpen) {
       setCardNumber('')
       resetMessages()
+      setSumTransfer('')
     }
   }, [isSendMoneyModalOpen])
 
@@ -129,9 +132,12 @@ const Dashboard = () => {
                         <p className='bankName'>Visa Card</p>
                       </div>
                       <div className='currentSumOfTheCurrentBank'>
-                        <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>
+                        <p className='sumOfTheCurrentCard'>
+                          {userCurrency 
+                          ? <FontAwesomeIcon icon={faDollar} className='faDollar'/> 
+                          : <FontAwesomeIcon icon={faEuroSign} className='faDollar'/>}
                           {
-                userProfile?.userWallet[0].balance === undefined ? 0 : userProfile?.userWallet[0].balance
+                userBalance === undefined ? 0 : userBalance
 
                           }
                         </p>
@@ -147,7 +153,12 @@ const Dashboard = () => {
                     <p className='amountDesc'>Enter the amount</p>
                   </div>
                   <div className='enterTheAmountInInput'>
-                    <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollarInput'/></p>
+                    <p className='sumOfTheCurrentCard'>
+                      {userCurrency
+                      ?  <FontAwesomeIcon icon={faDollar} className='faDollarInput'/>
+                      :  <FontAwesomeIcon icon={faEuroSign} className='faDollarInput'/>
+                      }
+                     </p>
                     <input type="number"
                       className='amountOfTransfer'
                       placeholder='1000'
@@ -257,10 +268,12 @@ const Dashboard = () => {
                           {
                            typeof userRecentTransaction !== 'string'
                            ? 
-                           userRecentTransaction?.lastRecords.map((record: any) => { 
-                             const [date] = record.createdAt.split('T')
+                           userRecentTransaction?.map((record: Transaction) => { 
+                           const currency = record.recipient?.currency 
                             
-                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile})
+                            const [date] = record.createdAt.split('T')
+                            
+                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile, currency})
                             
                             return ( 
                           <>
