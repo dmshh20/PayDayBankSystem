@@ -5,8 +5,7 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
     const [currentSumAccount, setCurrentSumAccount] = useState<number>(0)
     const [process, setProcess] = useState<string>('')
     const [error, setError] = useState<string>('')
-    const [transferResponse] = useState<string>()
-
+    const [defineCurrencyRecipientDuringTransfer, setDefineCurrencyRecipientDuringTransfer] = useState<string>()
     const token = localStorage.getItem('accessToken')
 
     const resetMessages = () => {
@@ -55,6 +54,7 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
                 convertedSum: amount, 
                 sender: recipientInfo.sender,
                 recipientCard: recipientInfo.recipientCard,
+                recipientCurrency: recipientInfo.recipientCurrency
             }
                 
              const transferResponse = await axios.post(import.meta.env.VITE_TRANSFER, bodyTransfer , {
@@ -64,14 +64,14 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
                 }
             })
             
-            
+           setDefineCurrencyRecipientDuringTransfer(transferResponse.data.recipientCurrency)
             const newBalance = transferResponse.data.userSender.balance
             
             await refreshFromDashboard()
             setCurrentSumAccount(newBalance.toFixed(2) ?? 0)
 
             setProcess(transferResponse.data.message)
-
+            
     }
   
     return {
@@ -80,6 +80,6 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
         error,
         currentSumAccount,
         resetMessages,
-        transferResponse
+        defineCurrencyRecipientDuringTransfer
     }
 }

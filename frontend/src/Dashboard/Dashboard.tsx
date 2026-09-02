@@ -51,8 +51,8 @@ const Dashboard = () => {
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
-  const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
-    
+  const { handleCardNumberSubmit, process, error, resetMessages, defineCurrencyRecipientDuringTransfer } = useSubmitTransfer(refresh)
+  const recipientCurrency = defineCurrencyRecipientDuringTransfer
   
   hiddenScroll()
   
@@ -260,10 +260,10 @@ const Dashboard = () => {
                            typeof userRecentTransaction !== 'string'
                            ? 
                            userRecentTransaction?.map((record: Transaction) => { 
-                            
+                              
                              const [date] = record.createdAt.split('T')
                             
-                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile})
+                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile, recipientCurrency})
                             
                             return ( 
                           <>

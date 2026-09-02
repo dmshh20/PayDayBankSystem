@@ -43,7 +43,7 @@ export const useDashboard =  () => {
             'Content-Type': 'application/json'
                 }
         })
-            
+              
             setUserRecentTransaction(recentTransactionsResponse.data.message || recentTransactionsResponse.data)
 
         } catch(error: unknown) {

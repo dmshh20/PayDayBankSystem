@@ -14,7 +14,8 @@ export class TransferService {
     ) {}
 
     async transfer(body: transferDto, user: getUserDto) {
-           
+        //    console.log('checking body ', body);
+           const recipientCurrency = body.recipientCurrency
             const convertedSum = Number(body.convertedSum)
             const sumToDecrement = Number(body.sumToDecrement)
             const userSender = body.sender
@@ -62,7 +63,7 @@ export class TransferService {
                         }
                     }
                 })
-                return {message: "Money was sent successfully", userSender}
+                return {message: "Money was sent successfully", userSender, recipientCurrency}
             })
     }
 

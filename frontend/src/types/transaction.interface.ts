@@ -19,7 +19,7 @@ export interface Transaction {
   sender: SenderResponse
   senderId: number
   statusCode: number
-  sum: number
+  convertedSum: number
   updatedAt: string
   url: string
   user: SenderResponse 

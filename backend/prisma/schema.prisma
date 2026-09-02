@@ -29,7 +29,8 @@ model LoggingTransaction {
   url           String
   method        String
   statusCode    Int
-  sum           Int
+  sumToSend     Int
+  convertedSum  Int
   createdAt     DateTime   @default(now()) 
   updatedAt     DateTime   @updatedAt
 

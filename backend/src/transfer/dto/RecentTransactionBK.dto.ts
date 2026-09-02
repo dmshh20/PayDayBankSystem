@@ -20,7 +20,10 @@ export class RecentTransactionDto {
     statusCode: number
 
     @IsNumber()
-    sum: number
+    sumToSend: number
+
+    @IsNumber()
+    convertedSum: number
 
     @IsDate()
     createdAt: Date

@@ -11,6 +11,9 @@ export class transferDto {
 
     @IsString()
     recipientCard: string
+
+    @IsString()
+    recipientCurrency: string
 }
 
 export class transferSenderDto {

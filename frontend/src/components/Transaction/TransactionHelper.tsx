@@ -1,7 +1,7 @@
 import type { TransactionHelperProps } from './TransactionInterface'
 
 
-export const TransactionHelper = ({record, userProfile}: TransactionHelperProps) => {
+export const TransactionHelper = ({record, userProfile, recipientCurrency}: TransactionHelperProps) => {
     const whoIsUser = record.recipientId !== userProfile?.id
   
   return {
@@ -10,7 +10,7 @@ export const TransactionHelper = ({record, userProfile}: TransactionHelperProps)
         ? `To ${record?.recipient.userWallet.firstName} ${record?.recipient.userWallet.surName}`
         : `Got from ${record?.sender.userWallet.firstName} ${record?.sender.userWallet.surName}`,
     kindOfTransfer: whoIsUser ? record?.recipientLastFour : record?.senderLastFour,
-    amount: `${whoIsUser? '-' : '+'}$${record.sum}`
+    amount: `${whoIsUser? '-' : '+'}${recipientCurrency === 'USD' ? '$': '€'}$${record.convertedSum}`
   }
 }
 
