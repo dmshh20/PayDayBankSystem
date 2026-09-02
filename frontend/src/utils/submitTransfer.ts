@@ -5,7 +5,6 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
     const [currentSumAccount, setCurrentSumAccount] = useState<number>(0)
     const [process, setProcess] = useState<string>('')
     const [error, setError] = useState<string>('')
-    const [defineCurrencyRecipientDuringTransfer, setDefineCurrencyRecipientDuringTransfer] = useState<string>()
     const token = localStorage.getItem('accessToken')
 
     const resetMessages = () => {
@@ -64,7 +63,6 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
                 }
             })
             
-           setDefineCurrencyRecipientDuringTransfer(transferResponse.data.recipientCurrency)
             const newBalance = transferResponse.data.userSender.balance
             
             await refreshFromDashboard()
@@ -80,6 +78,6 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
         error,
         currentSumAccount,
         resetMessages,
-        defineCurrencyRecipientDuringTransfer
+        
     }
 }

@@ -2,6 +2,7 @@ import './Dashboard.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import { faDollar } from '@fortawesome/free-solid-svg-icons'
+import { faEuroSign } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
@@ -51,9 +52,9 @@ const Dashboard = () => {
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
-  const { handleCardNumberSubmit, process, error, resetMessages, defineCurrencyRecipientDuringTransfer } = useSubmitTransfer(refresh)
-  const recipientCurrency = defineCurrencyRecipientDuringTransfer
-  
+  const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
+  const userCurrency = userProfile?.userWallet[0].currency === 'USD'    
+  const userBalance =  userProfile?.userWallet[0].balance
   hiddenScroll()
   
   useEffect(() => {
@@ -131,9 +132,12 @@ const Dashboard = () => {
                         <p className='bankName'>Visa Card</p>
                       </div>
                       <div className='currentSumOfTheCurrentBank'>
-                        <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>
+                        <p className='sumOfTheCurrentCard'>
+                          {userCurrency 
+                          ? <FontAwesomeIcon icon={faDollar} className='faDollar'/> 
+                          : <FontAwesomeIcon icon={faEuroSign} className='faDollar'/>}
                           {
-                userProfile?.userWallet[0].balance.toFixed(2) === undefined ? 0 : userProfile?.userWallet[0].balance.toFixed(2)
+                userBalance === undefined ? 0 : userBalance
 
                           }
                         </p>
@@ -149,7 +153,12 @@ const Dashboard = () => {
                     <p className='amountDesc'>Enter the amount</p>
                   </div>
                   <div className='enterTheAmountInInput'>
-                    <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollarInput'/></p>
+                    <p className='sumOfTheCurrentCard'>
+                      {userCurrency
+                      ?  <FontAwesomeIcon icon={faDollar} className='faDollarInput'/>
+                      :  <FontAwesomeIcon icon={faEuroSign} className='faDollarInput'/>
+                      }
+                     </p>
                     <input type="number"
                       className='amountOfTransfer'
                       placeholder='1000'
