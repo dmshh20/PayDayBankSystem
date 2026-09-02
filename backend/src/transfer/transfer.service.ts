@@ -113,7 +113,7 @@ export class TransferService {
                         }
                     },
                     recipient: {
-                        select: { id: true, cardNumber: true,  createdAt: true,
+                        select: { id: true, cardNumber: true,  createdAt: true, currency: true,
                         userWallet: {
                             select: {
                                 firstName: true, surName: true

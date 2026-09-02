@@ -3,7 +3,7 @@ import type { Transaction } from "../../types/transaction.interface"
 export interface TransactionHelperProps {
   record: Transaction
   userProfile: TransactionHelperPropsUserProfile
-  recipientCurrency: string | undefined
+  currency: string | undefined
 
 }
 

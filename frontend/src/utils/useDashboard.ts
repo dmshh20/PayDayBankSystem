@@ -7,13 +7,13 @@ import type { userProfileData } from "../types/userProfileInterface";
 export const useDashboard =  () => {
     const [userProfile, setUserProfile] = useState<userProfileData | any>()
     const [userBankAccount, setUserBankAccount] = useState<string | number>()
-    const [userRecentTransaction, setUserRecentTransaction] = useState<Transaction[] | null>()
+    const [userRecentTransaction, setUserRecentTransaction] =  useState<Transaction[] | null>()
     const token = localStorage.getItem('accessToken')
     const [error, setError] = useState<string>()
 
         const fetchDashboardData = async () => {
         if (!token) return;
-
+    
                 
         try {
 

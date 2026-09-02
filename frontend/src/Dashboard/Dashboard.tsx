@@ -260,10 +260,11 @@ const Dashboard = () => {
                            typeof userRecentTransaction !== 'string'
                            ? 
                            userRecentTransaction?.map((record: Transaction) => { 
-                              
-                             const [date] = record.createdAt.split('T')
+                           const currency = record.recipient?.currency 
                             
-                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile, recipientCurrency})
+                            const [date] = record.createdAt.split('T')
+                            
+                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile, currency})
                             
                             return ( 
                           <>

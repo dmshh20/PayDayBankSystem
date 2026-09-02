@@ -4,6 +4,7 @@ interface RecipientResponse {
   cardNumber: string
   createdAt: string
   userWallet: UserWallet
+  currency: string
 }
 interface SenderResponse {
   cardNumber: string
