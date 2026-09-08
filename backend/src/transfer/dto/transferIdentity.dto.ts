@@ -8,4 +8,7 @@ export class transferIdentityDto {
     @IsNumber()
     @IsNotEmpty()
     sum: number
+
+    @IsString()
+    currency: string
 }

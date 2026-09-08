@@ -23,6 +23,7 @@ export const useDashboard =  () => {
                 'Content-Type': 'application/json'          
                 }
             })
+            
             setUserProfile(userResponse.data) 
             
             const decryptResponse = await axios.post(import.meta.env.VITE_DECRYPT, 

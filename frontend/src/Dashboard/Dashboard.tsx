@@ -35,6 +35,7 @@ import { useDashboard } from '../utils/useDashboard'
 import { hiddenScroll } from '../utils/hiddenScroll'
 import { useSubmitTransfer } from '../utils/submitTransfer'
 import type { Transaction } from '../types/transaction.interface'
+import { useWallet } from '../components/Wallets/useWallet'
 
 ChartJS.register(
   CategoryScale,
@@ -53,8 +54,11 @@ const Dashboard = () => {
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
   const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
   const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
-  const userCurrency = userProfile?.userWallet[0].currency === 'USD'    
-  const userBalance =  userProfile?.userWallet[0].balance
+  const { userWallet } = useWallet()
+  const userCurrency = userWallet?.currency === 'USD'    
+  const userBalance =  userWallet?.balance
+  
+  
   hiddenScroll()
   
   useEffect(() => {
@@ -75,7 +79,7 @@ const Dashboard = () => {
   }
 
   const handeSubmitTransfer = () => {
-    handleCardNumberSubmit(cardNumber, String(sumTransfer))
+    handleCardNumberSubmit(cardNumber, String(sumTransfer), userWallet?.currency)
 
   }
   
@@ -119,7 +123,8 @@ const Dashboard = () => {
                           <p>Name</p>
                           <h4>{userProfile?.firstName} {userProfile?.surName}</h4>
                       </div>
-                         <p className='userCurrency'>{userProfile?.userWallet[0].currency}</p>
+                         <p className='userCurrency'>{userWallet?.currency}</p>
+
                     </div>  
                     <p className='userCardNumber'>{userBankAccount}</p>
                 </div>

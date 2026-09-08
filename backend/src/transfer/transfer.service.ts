@@ -14,18 +14,10 @@ export class TransferService {
     ) {}
 
     async transfer(body: transferDto, user: getUserDto) {
-        //    console.log('checking body ', body);
            const recipientCurrency = body.recipientCurrency
             const convertedSum = Number(body.convertedSum)
             const sumToDecrement = Number(body.sumToDecrement)
             const userSender = body.sender
-            // let currentSum = body.sum
-            // let currentCardNumber = body.cardNumber.replace(/\D/g,'');
-
-            // const hashCurrentCardNumber = await this.encryptService.hashingBlindIndex(currentCardNumber)
-            
-            // const existingCardNumber = await this.prisma.wallet.findUnique({where: {cardIndex: hashCurrentCardNumber}})
-            // const existingSender = await this.prisma.user.findUnique({where: {id: user.id}})
             
             return await this.prisma.$transaction(async (tx) => {
 
@@ -42,10 +34,11 @@ export class TransferService {
                   throw new BadRequestException("Insufficient funds")
                  }
 
-                     
+                    
                 await tx.wallet.updateMany({
                     where: {
-                        userId: user.id
+                        userId: user.id,
+                        currency: body.currency
                     },
                     data: {
                         balance: {
@@ -74,7 +67,7 @@ export class TransferService {
         const hashCurrentCardNumber = await this.encryptService.hashingBlindIndex(currentCardNumber)
             
         const existingCardNumber = await this.prisma.wallet.findUnique({where: {cardIndex: hashCurrentCardNumber}})
-        const existingSender = await this.prisma.wallet.findUnique({where: {id: user.id}})
+        const existingSender = await this.prisma.wallet.findFirst({where: {userId: user.id, currency: body.currency}})
            
         if (!existingCardNumber || !existingSender) {
             throw new BadRequestException('Card or User is not found')

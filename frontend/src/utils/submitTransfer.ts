@@ -12,7 +12,7 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
         setProcess('')
     }
 
-    const handleCardNumberSubmit = async (cardNumber: string, sumTransfer: string | undefined) => {
+    const handleCardNumberSubmit = async (cardNumber: string, sumTransfer: string | undefined, currency: string) => {
         resetMessages()
         if (!sumTransfer) {
            setError('Enter sum of money you want to send')
@@ -24,11 +24,11 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
 
              const body = {
                 cardNumber,
-                sum: Number(sumTransfer)
+                sum: Number(sumTransfer),
+                currency
             }
             
-          
-
+            
              const userRecipientIdentityResponse = await axios.post(import.meta.env.VITE_TRANSFER_IDENTITY, body, {
                  headers: {
                     Authorization: `Bearer ${token}`,
@@ -43,19 +43,19 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
                 recipientCurrency: recipientInfo.recipientCurrency
             }
             
-            
             const convertCurrency = await axios.get(
             `https://api.frankfurter.dev/v2/rate/${bodyConvert.senderCurrency}/${bodyConvert.recipientCurrency}`)
-           
+        
             const amount = recipientInfo.sumToSend * convertCurrency.data.rate
              const bodyTransfer = {
                 sumToDecrement: recipientInfo.sumToSend,
                 convertedSum: amount, 
                 sender: recipientInfo.sender,
                 recipientCard: recipientInfo.recipientCard,
-                recipientCurrency: recipientInfo.recipientCurrency
+                recipientCurrency: recipientInfo.recipientCurrency,
+                currency
             }
-                
+            
              const transferResponse = await axios.post(import.meta.env.VITE_TRANSFER, bodyTransfer , {
                 headers: {
                 Authorization: `Bearer ${token}`,
