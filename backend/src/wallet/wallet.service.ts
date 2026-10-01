@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Prisma } from 'generated/prisma/client';
+import { getUserDto } from 'src/auth/decorator/getUser.dto';
 import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -25,6 +26,31 @@ export class WalletService {
         })
         
         return wallets
+    }
+
+    async walletInfo(currency: string, user: getUserDto) {
+        
+        const wallet = await this.prisma.wallet.findFirst({
+            where: {
+                userId: user.id,
+                currency
+            },
+          
+        })
+
+        const currentCardNumber = wallet?.cardNumber 
+
+        if (typeof currentCardNumber !== 'string') {
+            return
+        }
+         const decryptCurrentCardNumber = await this.encryptService.decryptCardNumber({
+            cardNumber: currentCardNumber
+         })
+        
+        return {
+            ...wallet,
+            decryptCurrentCardNumber
+        }
     }
 
 

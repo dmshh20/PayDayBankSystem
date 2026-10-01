@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { GetUser } from 'src/auth/decorator/getUser';
 import { getUserDto } from 'src/auth/decorator/getUser.dto';
@@ -13,6 +13,12 @@ export class WalletController {
   @Get('')
   async getUserWallets(@GetUser() user: getUserDto) {
     return this.walletService.getUserWallets(user.id)
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('/info')
+  async walletInfo(@Query('currency') currency: string, @GetUser() user: getUserDto) {
+    return this.walletService.walletInfo(currency, user)
   }
 
   @UseGuards(JwtGuard)
