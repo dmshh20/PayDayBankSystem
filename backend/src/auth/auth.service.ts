@@ -7,6 +7,7 @@ import { EncryptService } from 'src/encrypt/encrypt.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { getUserDto } from './decorator/getUser.dto';
 import { Prisma } from 'generated/prisma/client';
+import { UserWalletInfoDto } from './dto/userWalletInfo.dto';
 
 @Injectable()
 export class AuthService {
@@ -105,4 +106,16 @@ export class AuthService {
             return existingUser
     }
 
+    async userWallet(user: getUserDto, userData: UserWalletInfoDto) {
+        const userWallet = await this.prisma.wallet.findFirst({
+            where: {
+                userId: user.id,
+                currency: userData.currency,
+            }, select: {
+                cardNumber: true
+                
+            }
+        })
+        return userWallet
+    }
 }

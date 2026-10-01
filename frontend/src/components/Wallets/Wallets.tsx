@@ -3,11 +3,10 @@ import './Wallets.css'
 import axios from 'axios'
 import OpenWalletModal from './OpenWalletModal'
 import type { WalletData, WalletDto } from './dto/wallet.dto'
-import { useWallet } from './useWallet'
+import { selectCurrency } from '../../utils/selectCurrency'
 
 
 const Wallets = () => {
-    const { selectCurrency } = useWallet()
     const [userWallets, setUserWallets] = useState<WalletData | any>([])
     const [error, setError] = useState<string>()
     const [isOpen, setIsOpen] = useState<boolean>(false)

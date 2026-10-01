@@ -22,7 +22,7 @@ import {
   Legend
 } from 'chart.js'
 import { Link, NavLink } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ExitModel from '../Modals/ExitModal/ExitModal'
 import  visaLogo  from '../image/visa-logo.png'
 import defaultUserLogo from '../image/default-user-logo.png'
@@ -35,7 +35,7 @@ import { useDashboard } from '../utils/useDashboard'
 import { hiddenScroll } from '../utils/hiddenScroll'
 import { useSubmitTransfer } from '../utils/submitTransfer'
 import type { Transaction } from '../types/transaction.interface'
-import { useWallet } from '../components/Wallets/useWallet'
+import  { UserWalletContext } from '../components/Wallets/userWallet.context'
 
 ChartJS.register(
   CategoryScale,
@@ -52,12 +52,12 @@ const Dashboard = () => {
   const [cardNumber, setCardNumber] = useState('');
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
-  const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
+  const { userRecentTransaction, refresh, userProfile } = useDashboard()
   const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
-  const { userWallet } = useWallet()
+  const { userWallet, refetchUserWallet } = useContext(UserWalletContext)
+
   const userCurrency = userWallet?.currency === 'USD'    
   const userBalance =  userWallet?.balance
-  
   
   hiddenScroll()
   
@@ -77,14 +77,16 @@ const Dashboard = () => {
   const handleExit = () => {
     localStorage.removeItem('accessToken')
   }
-
-  const handeSubmitTransfer = () => {
-    handleCardNumberSubmit(cardNumber, String(sumTransfer), userWallet?.currency)
-
+ 
+  const handeSubmitTransfer = async () => {
+    await handleCardNumberSubmit(cardNumber, String(sumTransfer), userWallet?.currency)
+    await refetchUserWallet()
+   
   }
   
 
   return (
+
     <section className='dashboard'>
         <div className='personalUserInfo'>
           <FontAwesomeIcon icon={faBell} className='faBell'/>
@@ -126,7 +128,8 @@ const Dashboard = () => {
                          <p className='userCurrency'>{userWallet?.currency}</p>
 
                     </div>  
-                    <p className='userCardNumber'>{userBankAccount}</p>
+                    <p className='userCardNumber'>{formatCardNumber(userWallet?.decryptCurrentCardNumber)}</p>
+
                 </div>
 
                 <div className='transfer'>
@@ -306,6 +309,7 @@ const Dashboard = () => {
 
         </div>
     </section>
+
   )
 }
 

@@ -7,6 +7,7 @@ import ProtectedRoutes from './routes/ProtectedRoutes'
 import Inbox from './Inbox/Inbox'
 import InboxLetter from './Inbox/InboxLetter/InboxLetter'
 import Wallets from './components/Wallets/Wallets'
+import { UserWalletProvider } from './components/Wallets/userWallet.context'
 
 const App = () => {
   return (
@@ -15,6 +16,8 @@ const App = () => {
     v7_relativeSplatPath: true,
     v7_startTransition: true
   }}>
+    <UserWalletProvider>
+
     <Routes>
 
      <Route element={<ProtectedRoutes>
@@ -33,9 +36,9 @@ const App = () => {
         <Route path='/signin' element={<SignIn></SignIn>} />
 
     </Routes>
+ </UserWalletProvider>
 
     </BrowserRouter>
-
     </>
   )
 }

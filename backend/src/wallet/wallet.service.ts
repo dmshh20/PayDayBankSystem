@@ -35,17 +35,22 @@ export class WalletService {
                 userId: user.id,
                 currency
             },
-            //  include: {
-            //     userWallet: {
-            //         select: {
-            //             firstName: true,
-            //             surName: true
-            //         }
-            //     }
-            //    }
+          
         })
+
+        const currentCardNumber = wallet?.cardNumber 
+
+        if (typeof currentCardNumber !== 'string') {
+            return
+        }
+         const decryptCurrentCardNumber = await this.encryptService.decryptCardNumber({
+            cardNumber: currentCardNumber
+         })
         
-        return wallet
+        return {
+            ...wallet,
+            decryptCurrentCardNumber
+        }
     }
 
 

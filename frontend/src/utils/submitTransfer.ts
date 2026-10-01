@@ -69,7 +69,6 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
             setCurrentSumAccount(newBalance.toFixed(2) ?? 0)
 
             setProcess(transferResponse.data.message)
-            
     }
   
     return {
@@ -78,6 +77,5 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
         error,
         currentSumAccount,
         resetMessages,
-        
     }
 }
