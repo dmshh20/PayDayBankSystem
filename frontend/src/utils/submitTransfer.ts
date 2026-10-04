@@ -13,7 +13,8 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
     }
 
     const handleCardNumberSubmit = async (cardNumber: string, sumTransfer: string | undefined, currency: string) => {
-        resetMessages()
+       try {
+         resetMessages()
         if (!sumTransfer) {
            setError('Enter sum of money you want to send')
            return
@@ -62,13 +63,19 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
                 'Content-Type': 'application/json'
                 }
             })
-            
             const newBalance = transferResponse.data.userSender.balance
             
             await refreshFromDashboard()
             setCurrentSumAccount(newBalance.toFixed(2) ?? 0)
 
             setProcess(transferResponse.data.message)
+
+       } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError('Choose another sum of sending')
+
+            }
+       }
     }
   
     return {

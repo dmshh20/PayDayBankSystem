@@ -14,6 +14,13 @@ export class TransferService {
     ) {}
 
     async transfer(body: transferDto, user: getUserDto) {
+        // console.log('body fields', body)
+        
+            if (body.convertedSum < 1) {
+                return {message: 'Choose another sum of sending'}
+                // throw new BadRequestException('Choose another sum of sending');
+            }
+
            const recipientCurrency = body.recipientCurrency
             const convertedSum = Number(body.convertedSum)
             const sumToDecrement = Number(body.sumToDecrement)
@@ -89,7 +96,7 @@ export class TransferService {
 
     async recentTransaction(user: getUserDto) {
             const senderId = user.id
-    
+                    
             const recentTransaction = await this.prisma.loggingTransaction.findMany({
                 take: 5,
                 where: {
