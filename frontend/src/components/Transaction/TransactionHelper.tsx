@@ -2,7 +2,7 @@ import type { TransactionHelperProps } from './TransactionInterface'
 
 
 export const TransactionHelper = ({record, userProfile, currency}: TransactionHelperProps) => {
-  const whoIsUser = record.recipientId !== userProfile?.id
+  const whoIsUser = record.recipientId !== userProfile?.id  
   const userCurrency = currency === 'USD' ? '$': '€'
   return {
     fullName: 

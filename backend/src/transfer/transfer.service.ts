@@ -56,6 +56,7 @@ export class TransferService {
                         }
                     }
                 })
+                
                 return {message: "Money was sent successfully", userSender, recipientCurrency}
             })
     }
@@ -92,7 +93,10 @@ export class TransferService {
             const recentTransaction = await this.prisma.loggingTransaction.findMany({
                 take: 5,
                 where: {
-                   OR: [{recipientId: senderId},{senderId},]
+                  OR: [
+                { sender: { userId: senderId } },
+                { recipient: { userId: senderId } }
+            ]
                 }, orderBy: { createdAt: 'desc' }
                 , include: {
                     sender: {
@@ -109,7 +113,7 @@ export class TransferService {
                         select: { id: true, cardNumber: true,  createdAt: true, currency: true,
                         userWallet: {
                             select: {
-                                firstName: true, surName: true
+                                firstName: true, surName: true,
                             }
                         }
                     }}
@@ -147,4 +151,6 @@ export class TransferService {
 
             return lastRecords
     }
+
+    
 }

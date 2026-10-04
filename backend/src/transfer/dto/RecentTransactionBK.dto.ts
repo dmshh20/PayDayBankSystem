@@ -5,10 +5,10 @@ export class RecentTransactionDto {
     id: number 
     
     @IsNumber()
-    senderId: number
+    senderWalletId: number
 
     @IsNumber()
-    recipientId: number
+    recipientWalletId: number
 
     @IsString()
     url: string

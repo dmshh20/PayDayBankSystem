@@ -17,11 +17,10 @@ export class LoggingInterceptor implements NestInterceptor {
     const response = context.switchToHttp().getResponse()
     
     const { url, method } = request
-    const { convertedSum, recipientCard, sumToDecrement } = request.body
+    const { convertedSum, recipientCard, sumToDecrement, currency, recipientCurrency } = request.body
     
-    const senderId = request.user?.id
+     const senderId = request.user?.id
 
-    
     const getCardNumber = String(recipientCard).replace(/\s+/g, '')
         
     const now = Date.now();
@@ -31,28 +30,46 @@ export class LoggingInterceptor implements NestInterceptor {
         tap(async () => {
             const { statusCode } = response
             
-            // const recipientId = await this.encryptService.hashingBlindIndex(getCardNumber)
-            // console.log('RECIPIENt CHECK', recipientId)
-            
-            const existingCardNumber = await this.prisma.wallet.findUnique({
+            const recipientWallet = await this.prisma.wallet.findUnique({
                 where: { cardIndex: String(getCardNumber)}})
             
-            if (!existingCardNumber) {
+            if (!recipientWallet) {
                 throw new BadRequestException('User not found')
             }
-            if (existingCardNumber) {
-                await this.prisma.loggingTransaction.create({
-                    data: {
-                        senderId,
-                        recipientId: Number(existingCardNumber.userId),
+
+            
+            const senderWallet = await this.prisma.wallet.findFirst({
+                where: {
+                    userId: senderId,
+                    currency: currency
+                }
+            })
+
+            if (!senderWallet) {
+                throw new BadRequestException('User Sender not found')
+
+            }
+
+            const payload = {
+                        senderWalletId: Number(senderWallet?.id),
+                        recipientWalletId: Number(recipientWallet.id),
                         url,
                         method,
                         statusCode,
                         convertedSum: convertedSum,
-                        sumToSend: sumToDecrement
-                    }
-                })
+                        sumToSend: sumToDecrement,
+                        senderCurrency: currency,
+                        recipientCurrency: recipientCurrency
             }
+
+            if (!payload) {
+                throw new BadRequestException("Error in loggingTransactions")
+            }
+
+            await this.prisma.loggingTransaction.create({
+                data: payload
+            })
+            
 
         console.log(`${Date.now() - now}ms`)
 

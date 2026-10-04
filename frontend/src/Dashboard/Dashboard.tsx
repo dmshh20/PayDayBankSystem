@@ -35,7 +35,7 @@ import { useDashboard } from '../utils/useDashboard'
 import { hiddenScroll } from '../utils/hiddenScroll'
 import { useSubmitTransfer } from '../utils/submitTransfer'
 import type { Transaction } from '../types/transaction.interface'
-import  { UserWalletContext } from '../components/Wallets/userWallet.context'
+import { UserWalletContext } from '../components/Wallets/userWallet.context'
 
 ChartJS.register(
   CategoryScale,
@@ -277,6 +277,7 @@ const Dashboard = () => {
                            typeof userRecentTransaction !== 'string'
                            ? 
                            userRecentTransaction?.map((record: Transaction) => { 
+                            
                            const currency = record.recipient?.currency 
                             
                             const [date] = record.createdAt.split('T')
