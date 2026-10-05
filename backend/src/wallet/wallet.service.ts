@@ -84,7 +84,7 @@ export class WalletService {
                 throw new BadRequestException('Failed to create New Wallet')
             }
 
-        return createNewUserWallet
+        return {...createNewUserWallet, success: `New ${userNewWallet} Wallet was created successfully`}
         
     }
 }

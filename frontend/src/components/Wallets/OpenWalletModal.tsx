@@ -8,10 +8,13 @@ interface OpenWalletModalProps {
 }
 
 
-const OpenWalletModal = ({children}: OpenWalletModalProps) => {
+const OpenWalletModal = ({children, setIsOpen}: OpenWalletModalProps) => {
   return (
-    <section className='openWalletModal'>
+    <section className='openWalletModal' onClick={() => setIsOpen(false)}>
+        <div onClick={(e) => e.stopPropagation()}>
         {children}
+
+        </div>
     </section>
 
 )

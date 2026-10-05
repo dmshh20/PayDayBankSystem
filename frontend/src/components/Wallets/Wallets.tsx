@@ -9,6 +9,7 @@ import { selectCurrency } from '../../utils/selectCurrency'
 const Wallets = () => {
     const [userWallets, setUserWallets] = useState<WalletData | any>([])
     const [error, setError] = useState<string>()
+    const [process, setProcess] = useState<string>()
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const token = localStorage.getItem('accessToken')
     
@@ -38,6 +39,8 @@ const Wallets = () => {
 
     const toggleModal = () => {
         setIsOpen((prev) => !prev)
+        setError('')
+        setProcess('')
     }
 
     const openNewWallet = async (userNewWallet: string) => {
@@ -49,9 +52,11 @@ const Wallets = () => {
                     'Content-Type': 'application/json'
                 }
             })
-
+            setProcess(response.data.success)
+            
             return response.data
         } catch(error: unknown) {
+            setProcess('')
             if (axios.isAxiosError(error)) {
                 setError(error?.response?.data?.message)            
             } else if (error instanceof Error) {
@@ -71,20 +76,25 @@ const Wallets = () => {
                 
                 <button className='openCardBtn' onClick={toggleModal}>Open new credit card</button>
                  {isOpen && 
-                <OpenWalletModal setIsOpen={setIsOpen}>
-                        <div className='openWalletScreenChooseCurrency'>
-
-                            <p onClick={() => setIsOpen(false)}>exit</p>
+                <OpenWalletModal setIsOpen={setIsOpen} >
+                        <div className='openWalletScreenChooseCurrency' >
 
                             <div className='availableCurrencyList'>
-                                <h3>Choose New Card Currency</h3>
+                                <h3 className='availableCurrencyListMessage'>Choose New Card Currency</h3>
                                 <div className='currencyList'>
                                     <p onClick={() => openNewWallet('USD')} className='currency'>🇺🇸 USD - US Dollar</p>
                                     <p onClick={() => openNewWallet('EUR')} className='currency'>🇪🇺 EUR - Euro</p>   
-                                    <p>error: {error}</p> 
                                 </div>
+                                    {process 
+                                    ? 
+                                    <p className='currencyListProcess'>{process}</p>
+                                    :
+                                    <p className='currencyListError'>{error}</p> 
+
+                                    }
                                       
                             </div>
+
                         </div>
                     
                     </OpenWalletModal>}
