@@ -96,15 +96,15 @@ export class TransferService {
     }
 
 
-    async recentTransaction(user: getUserDto) {
+    async recentTransaction(user: getUserDto, currencyChoice: string) {
             const senderId = user.id
                     
             const recentTransaction = await this.prisma.loggingTransaction.findMany({
                 take: 5,
                 where: {
                   OR: [
-                { sender: { userId: senderId } },
-                { recipient: { userId: senderId } }
+                { sender: { userId: senderId, currency: currencyChoice } },
+                { recipient: { userId: senderId, currency: currencyChoice } },
             ]
                 }, orderBy: { createdAt: 'desc' }
                 , include: {

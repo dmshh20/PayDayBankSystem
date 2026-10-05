@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { TransferService } from './transfer.service';
 import { JwtGuard } from 'src/auth/guard/jwt-auth.guard';
 import { transferIdentityDto } from './dto/transferIdentity.dto';
@@ -26,8 +26,8 @@ export class TransferController {
 
   @Get('/recent')
   @UseGuards(JwtGuard)
-  async recentTransaction(@GetUser() user: getUserDto) {
-    return this.transferService.recentTransaction(user)
+  async recentTransaction(@GetUser() user: getUserDto, @Query('currencyChoice') currencyChoice: string) {
+    return this.transferService.recentTransaction(user, currencyChoice)
   }
   
 }
