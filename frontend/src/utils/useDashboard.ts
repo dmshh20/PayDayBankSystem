@@ -9,6 +9,7 @@ export const useDashboard =  () => {
     const [userBankAccount, setUserBankAccount] = useState<string | number>()
     const [userRecentTransaction, setUserRecentTransaction] =  useState<Transaction[] | null>()
     const token = localStorage.getItem('accessToken')
+    const currencyChoice = localStorage.getItem('currencyParam')
     const [error, setError] = useState<string>()
 
         const fetchDashboardData = async () => {
@@ -39,6 +40,9 @@ export const useDashboard =  () => {
             setUserBankAccount(formatCardNumber(decryptResponse.data))
         
             const recentTransactionsResponse = await axios.get(import.meta.env.VITE_RECENT_TRANSACTIONS, {
+                params: {
+                    currencyChoice
+                },
             headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
