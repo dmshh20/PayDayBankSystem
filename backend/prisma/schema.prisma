@@ -22,19 +22,38 @@ model User {
   userWallet   Wallet[]
 } 
 
-model LoggingTransaction {
-  id            Int      @id @default(autoincrement())
-  senderId      Int 
-  recipientId   Int
-  url           String
-  method        String
-  statusCode    Int
-  sum           Int
+model Wallet {
+  id            Int     @id @default(autoincrement())
+  userId        Int     
+  cardNumber    String   @unique
+  cardIndex     String   @unique
+  currency      String
+  balance       Int    @default(0)
   createdAt     DateTime   @default(now()) 
   updatedAt     DateTime   @updatedAt
 
-  sender    Wallet @relation("GetSender", fields: [senderId], references: [id])
-  recipient Wallet @relation("GetRecipient",fields: [recipientId], references: [id])
+  userWallet   User     @relation(fields: [userId], references: [id])
+
+  getSender    LoggingTransaction[] @relation("GetSender")
+  getRecipient LoggingTransaction[] @relation("GetRecipient")
+}
+
+model LoggingTransaction {
+  id                  Int      @id @default(autoincrement())
+  senderWalletId            Int 
+  recipientWalletId         Int
+  url                 String
+  method              String
+  statusCode          Int
+  sumToSend           Int
+  convertedSum        Int
+  createdAt           DateTime   @default(now()) 
+  updatedAt           DateTime   @updatedAt
+  recipientCurrency   String
+  senderCurrency      String
+
+  sender    Wallet @relation("GetSender", fields: [senderWalletId], references: [id])
+  recipient Wallet @relation("GetRecipient",fields: [recipientWalletId], references: [id])
 }
 
 model Inbox {
@@ -48,17 +67,3 @@ model Inbox {
   userInbox    User @relation("GetInbox", fields: [userId], references: [id]) 
 }
 
-model Wallet {
-  id            Int     @id @default(autoincrement())
-  userId        Int     
-  cardNumber    String   @unique
-  cardIndex     String   @unique
-  currency      String
-  balance       Float    @default(0)
-  createdAt     DateTime   @default(now()) 
-  updatedAt     DateTime   @updatedAt
-
-  userWallet   User     @relation(fields: [userId], references: [id])
-  getSender    LoggingTransaction[] @relation("GetSender")
-  getRecipient LoggingTransaction[] @relation("GetRecipient")
-}

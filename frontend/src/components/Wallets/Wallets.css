@@ -8,21 +8,27 @@
 .wallets-cards {
     display: flex;
     justify-content: center;
+    gap: 20px;
 }
 .userWallet {
     color: #f2f2f2;
-    width: 260px;
+    width: 270px;
     height: 140px;
     background-color: #0177fb;
     border-radius: 20px;
     padding: 20px;
     font-size: 16px;
+    display: flex;
+    gap: 200px;
 }
+
 .userWalletBlock {
     display: flex;
     justify-content: center;
     gap: 80px;
+    cursor: pointer;
 }
+
 .userCurrency {
     margin-bottom: 30px;
 }
@@ -46,6 +52,12 @@
     background-color: green;
     transition-duration: 0.3s;
 }
+.availableCurrencyList {
+    margin-top: 20px;
+}
+.availableCurrencyListMessage  {
+    padding: 20px;    
+}
 .openWalletScreenChooseCurrency {
     width: 400px;
     height: 300px;
@@ -53,11 +65,25 @@
 }
 .currencyList {
     display: flex;
+    justify-content: center;
     gap: 20px;
-    margin-top: 20px;
+}
+.currencyListError {
+    margin-top: 50px;
+    color: red;
+}
+.currencyListProcess {
+    color: green;
+    margin-top: 50px;
 }
 .currency {
     padding: 2px;
     background-color: lightgray;
     cursor: pointer;
+}
+.userCardInfo p {
+    text-align: left;
+}
+.userBalance {
+    margin-top: 20px;
 }

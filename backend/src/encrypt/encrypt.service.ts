@@ -31,6 +31,7 @@ export class EncryptService {
     }
 
     async decryptCardNumber(body: decryptDto) {
+       
         const [ivKey, cardNumber] = body.cardNumber.split(':')
         
         const iv = Buffer.from(ivKey, 'hex')

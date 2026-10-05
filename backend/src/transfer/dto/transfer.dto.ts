@@ -1,11 +1,46 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsDate, IsNumber, IsString } from "class-validator"
 
 export class transferDto {
-    @IsString()
-    @IsNotEmpty()
-    cardNumber: string
+    @IsNumber()
+    sumToDecrement: number
 
     @IsNumber()
-    @IsNotEmpty()
-    sum: number
+    convertedSum: number
+
+    sender: transferSenderDto
+
+    @IsString()
+    recipientCard: string
+
+    @IsString()
+    recipientCurrency: string
+
+    @IsString()
+    currency: string
+}
+
+export class transferSenderDto {
+    @IsNumber()
+    id: number
+    
+    @IsNumber()
+    userId: number
+
+    @IsString()
+    cardNumber: string
+
+    @IsString()
+    cardIndex: string
+
+    @IsString()
+    currency: string
+
+    @IsNumber()
+    balance: number
+
+    @IsDate()
+    createdAt: Date
+
+    @IsDate()
+    updatedAt: Date
 }

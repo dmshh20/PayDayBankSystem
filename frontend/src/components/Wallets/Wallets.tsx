@@ -2,33 +2,21 @@ import { useEffect, useState } from 'react'
 import './Wallets.css'
 import axios from 'axios'
 import OpenWalletModal from './OpenWalletModal'
+import type { WalletData, WalletDto } from './dto/wallet.dto'
+import { selectCurrency } from '../../utils/selectCurrency'
 
-export interface WalletData {
-    id: number
-    userId: number
-    cardNumber: string
-    cardIndex: string
-    currency: string
-    balance: number
-    createdAt: Date
-    updatedAt: Date
-    useWallet: WalletDataUserScope
-}
-export interface WalletDataUserScope {
-    firstName: string
-    surName: string
-}
 
 const Wallets = () => {
     const [userWallets, setUserWallets] = useState<WalletData | any>([])
     const [error, setError] = useState<string>()
+    const [process, setProcess] = useState<string>()
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const token = localStorage.getItem('accessToken')
-
+    
     useEffect(() => {
              getUserWallets()
     }, [])
-
+ 
     const getUserWallets = async () => {
         try {    
             const response = await axios.get(import.meta.env.VITE_WALLET, {
@@ -51,6 +39,8 @@ const Wallets = () => {
 
     const toggleModal = () => {
         setIsOpen((prev) => !prev)
+        setError('')
+        setProcess('')
     }
 
     const openNewWallet = async (userNewWallet: string) => {
@@ -62,9 +52,11 @@ const Wallets = () => {
                     'Content-Type': 'application/json'
                 }
             })
-
+            setProcess(response.data.success)
+            
             return response.data
         } catch(error: unknown) {
+            setProcess('')
             if (axios.isAxiosError(error)) {
                 setError(error?.response?.data?.message)            
             } else if (error instanceof Error) {
@@ -75,6 +67,7 @@ const Wallets = () => {
         }
     }
 
+
   return (
     <section className='wallets'>
         <h2 className='wallets-title'>All your available cards</h2>
@@ -83,20 +76,25 @@ const Wallets = () => {
                 
                 <button className='openCardBtn' onClick={toggleModal}>Open new credit card</button>
                  {isOpen && 
-                <OpenWalletModal setIsOpen={setIsOpen}>
-                        <div className='openWalletScreenChooseCurrency'>
-
-                            <p onClick={() => setIsOpen(false)}>exit</p>
+                <OpenWalletModal setIsOpen={setIsOpen} >
+                        <div className='openWalletScreenChooseCurrency' >
 
                             <div className='availableCurrencyList'>
-                                <h3>Choose New Card Currency</h3>
+                                <h3 className='availableCurrencyListMessage'>Choose New Card Currency</h3>
                                 <div className='currencyList'>
                                     <p onClick={() => openNewWallet('USD')} className='currency'>🇺🇸 USD - US Dollar</p>
                                     <p onClick={() => openNewWallet('EUR')} className='currency'>🇪🇺 EUR - Euro</p>   
-                                    <p>error: {error}</p> 
                                 </div>
+                                    {process 
+                                    ? 
+                                    <p className='currencyListProcess'>{process}</p>
+                                    :
+                                    <p className='currencyListError'>{error}</p> 
+
+                                    }
                                       
                             </div>
+
                         </div>
                     
                     </OpenWalletModal>}
@@ -104,18 +102,21 @@ const Wallets = () => {
             </div>
 
         <div className='wallets-cards'>
-          {userWallets.map((record: any) => {
+          {userWallets.map((record: WalletDto) => {
             const currency = record.currency === 'EUR' ? '€' : '$'
+
             return (
-            <div className='userWallet'>
+            <div className='userWallet' onClick={() => selectCurrency(record.currency)}
+            >
                 <div className="userWalletBlock">
                      <div className='userCardInfo'> 
                           <p>Name</p>
                           <h4>{record.userWallet.firstName} {record.userWallet.surName}</h4>
+                         <p className='userBalance'><b>{currency}</b>{record.balance}</p>
+
                       </div>
                       <div className='userCurrencyBlock'>
                          <p className='userCurrency'>{record.currency}</p>
-                         <p className='userBalance'><b>{currency}</b>{record.balance}</p>
                       </div>
                 </div>
 

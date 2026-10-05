@@ -30,48 +30,73 @@ A modern, full-stack banking system built with **NestJS**, **React**, **TypeScri
 
 ### ✅ Implemented
 
-- **User Authentication**
-  - User registration with email validation
-  - Secure login with JWT tokens
-  - Password hashing with bcrypt (10 salt rounds)
-  - Protected routes with JWT guards
+- **User Authentication & Account Creation**
+  - Email-based registration and login
+  - Password hashing with bcrypt
+  - JWT-based sessions and protected routes
+  - User profile loading via `/auth/me`
+  - Sign-up flow that creates the user's first wallet immediately
 
-- **Card Management**
-  - Auto-generated card numbers for new users
-  - Encrypted card storage (AES-256-CTR encryption)
-  - Blind indexing for searchable encryption
-  - Unique card constraints
+- **Encrypted Card Management**
+  - Auto-generated card numbers per user wallet
+  - AES-encrypted card storage in PostgreSQL
+  - Blind-index hashing for secure recipient lookup without exposing full card numbers
+  - Unique wallet/card constraints to prevent duplicates
 
-- **Dashboard**
-  - User profile display
-  - Revenue analytics with Chart.js
-  - Transaction visualization (recent transactions showing sender/recipient names, transfer amounts with +/- indicators, dates, and last four digits of card numbers)
-  - User account overview
-  - Real-time balance display
-  - Automatic data refresh on load
+- **Multi-Currency Wallet System**
+  - Users can create and manage multiple wallet accounts in different currencies
+  - Each wallet stores its own balance, currency, card number, and creation metadata
+  - Wallet selection is driven by currency and persisted in the frontend state
+  - Supports adding a wallet for a new currency while preventing duplicate wallets for the same user/currency pair
+
+- **Dashboard & Account Overview**
+  - User profile section with personal details
+  - Active wallet balance display by selected currency
+  - Recent transaction feed with sender/recipient names, amounts, dates, and card suffixes
+  - Real-time balance refresh after transfer or wallet updates
+  - Dashboard layout built around a personal banking experience
 
 - **Money Transfers**
-  - Send money to other users by card number
-  - Real-time balance updates
-  - Automatic transfer validation
-  - Error handling (insufficient funds)
-  - Modal-based transfer interface
+  - Send money by entering a recipient card number
+  - Secure recipient lookup using blind-indexed card values
+  - Sender balance validation before processing
+  - Cross-currency transfer support using conversion values and recipient currency metadata
+  - Atomic updates with Prisma transactions to avoid partial balance changes
+  - Frontend transfer form with validation and error messaging
+
+- **Transaction Logging & History**
+  - Stores transfer records in `loggingTransaction` with sender and recipient wallet IDs
+  - Records conversion amounts, sender/recipient currency, and timestamps
+  - Recent activity is surfaced on the dashboard for the last transactions
+  - Helps support auditability and financial traceability
+
+- **Inbox / Messaging System**
+  - Support for user inbox messages with topic, message content, and type
+  - Message filtering by category/type
+  - Individual message retrieval using a generated `mailId`
+  - Internal communication channel for bank updates or notices
+
+- **Frontend Routing & App Flow**
+  - Protected routes for authenticated users
+  - Dedicated pages for Dashboard, Inbox, and Wallets
+  - Global wallet context to keep the currently selected wallet in sync across the app
 
 - **Security**
-  - Password encryption with bcrypt
+  - Password hashing with bcrypt
   - Card encryption with AES-256-CTR
-  - Blind index hashing for secure searches
-  - ACID transactions for money transfers
-  - CORS enabled
-  - Input validation with class-validator
+  - Blind-index lookups for secure search
+  - JWT guards for protected endpoints
+  - Prisma transactions for consistent money movement
+  - Class-validator and DTO-based request validation
 
 ### 🔄 In Progress / Planned
 
 - Multi-factor authentication (MFA)
-- Transaction history & detailed logs
 - Card block/unblock features
 - Admin dashboard
-- Email notifications
+- Email verification and notifications
+- Payment scheduling / recurring transfers
+- Better role-based access management
 
 ---
 
@@ -109,48 +134,67 @@ A modern, full-stack banking system built with **NestJS**, **React**, **TypeScri
 ### System Design
 
 ```
-┌─────────────────────────────────────────────────┐
-│                  Frontend (React)               │
-│  - Auth Components (SignUp, SignIn)            │
-│  - Dashboard                                    │
-│  - Protected Routes                            │
-└────────────────┬────────────────────────────────┘
-                 │ (HTTP/REST)
-┌────────────────▼────────────────────────────────┐
-│             Backend (NestJS)                     │
-│  ┌──────────────────────────────────────────┐   │
-│  │  Auth Module                             │   │
-│  │  - SignUp/SignIn Endpoints               │   │
-│  │  - JWT Validation                        │   │
-│  │  - Password Hashing                      │   │
-│  └──────────────────────────────────────────┘   │
-│  ┌──────────────────────────────────────────┐   │
-│  │  Encrypt Module                          │   │
-│  │  - Card Generation                       │   │
-│  │  - AES Encryption                        │   │
-│  │  - Blind Index Hashing                   │   │
-│  └──────────────────────────────────────────┘   │
-│  ┌──────────────────────────────────────────┐   │
-│  │  Prisma Module (ORM)                     │   │
-│  │  - Database Abstraction                  │   │
-│  │  - Query Building                        │   │
-│  └──────────────────────────────────────────┘   │
-└────────────────┬────────────────────────────────┘
-                 │ (TCP)
-┌────────────────▼────────────────────────────────┐
-│        PostgreSQL Database (Docker)             │
-│  - Users Table                                  │
-│  - Encrypted Card Data                         │
-│  - Transaction Logs (Future)                    │
-└─────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                     Frontend (React + Vite)                 │
+│  - SignUp / SignIn                                         │
+│  - Protected dashboard routes                              │
+│  - Wallet management screens                               │
+│  - Inbox message list and mail detail views                 │
+│  - Transfer form and recent transaction feed                │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ (HTTP/REST + JWT)
+┌──────────────────────────────▼──────────────────────────────┐
+│                    Backend (NestJS + Prisma)                │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │ Auth Module                                         │    │
+│  │ - Signup / Signin                                   │    │
+│  │ - JWT generation and validation                     │    │
+│  │ - User profile retrieval                             │    │
+│  └──────────────────────────────────────────────────────┘    │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │ Wallet Module                                        │    │
+│  │ - Wallet creation                                    │    │
+│  │ - Multi-currency balances                            │    │
+│  │ - Wallet lookup by currency                          │    │
+│  └──────────────────────────────────────────────────────┘    │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │ Transfer Module                                      │    │
+│  │ - Recipient lookup by card number                   │    │
+│  │ - Balance validation                                 │    │
+│  │ - Cross-currency transfer handling                  │    │
+│  │ - Logging of recent transactions                     │    │
+│  └──────────────────────────────────────────────────────┘    │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │ Inbox Module                                         │    │
+│  │ - Mail categories                                    │    │
+│  │ - Message retrieval                                   │    │
+│  │ - Mail detail access by ID                           │    │
+│  └──────────────────────────────────────────────────────┘    │
+│  ┌──────────────────────────────────────────────────────┐    │
+│  │ Encrypt Module                                       │    │
+│  │ - Card generation                                     │    │
+│  │ - AES encryption                                      │    │
+│  │ - Blind index hashing                                 │    │
+│  └──────────────────────────────────────────────────────┘    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ (TCP)
+┌──────────────────────────────▼──────────────────────────────┐
+│                 PostgreSQL Database (Docker)                │
+│  - users                                                   │
+│  - wallets                                                  │
+│  - logging_transaction                                      │
+│  - inbox                                                    │
+│  - encrypted card data and blind indexes                    │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Data Flow
 
-1. **Registration:** User → Frontend → Backend (Encrypt Module) → Database
-2. **Login:** User Credentials → JWT Service → Token → Frontend (localStorage)
-3. **Protected Route:** Token → JWT Guard → User Data → Dashboard
-4. **Money Transfer:** Sender Card → Backend (Validation) → ACID Transaction → Balance Update → Frontend (Real-time)
+1. **Registration:** User signs up → server creates user + initial wallet → encrypted card data is stored in PostgreSQL.
+2. **Authentication:** User logs in → JWT returned → frontend stores token and accesses protected routes.
+3. **Wallet selection:** Dashboard or wallet screen fetches wallet data by selected currency and updates the current balance display.
+4. **Transfer flow:** Sender enters recipient card number → backend resolves recipient via blind-index lookup → balance validation and conversion logic run → atomic update saves both balances and logs the transaction.
+5. **Inbox flow:** User opens inbox → filtered messages render by category → mail details are loaded by `mailId`.
 
 ---
 
@@ -161,78 +205,56 @@ PayDayBankSystem/
 │
 ├── backend/
 │   ├── src/
-│   │   ├── auth/                    # Authentication module
-│   │   │   ├── auth.controller.ts   # Auth endpoints
-│   │   │   ├── auth.service.ts      # Auth business logic
-│   │   │   ├── auth.module.ts       # Module definition
-│   │   │   ├── dto/                 # Data transfer objects
-│   │   │   │   ├── SignUp.dto.ts
-│   │   │   │   └── SignIn.dto.ts
-│   │   │   ├── guard/               # JWT authentication guard
-│   │   │   ├── strategy/            # JWT strategy
-│   │   │   └── decorator/           # Custom decorators
-│   │   │
-│   │   ├── encrypt/                 # Encryption module
-│   │   │   ├── encrypt.service.ts   # Card encryption logic
-│   │   │   ├── encrypt.controller.ts
-│   │   │   └── encrypt.module.ts
-│   │   │
-│   │   ├── prisma/                  # Database service
-│   │   │   ├── prisma.service.ts
-│   │   │   └── prisma.module.ts
-│   │   │
-│   │   ├── app.module.ts            # Root module
+│   │   ├── auth/                    # Authentication and user profile logic
+│   │   ├── encrypt/                 # Card generation / AES / blind index encryption
+│   │   ├── transfer/                # Transfer flow + validation + transaction history
+│   │   ├── wallet/                  # Multi-currency wallet management
+│   │   ├── inbox/                   # Message / notification inbox system
+│   │   ├── interceptor/            # Logging and transfer audit tracking
+│   │   ├── prisma/                 # Prisma service and database access
+│   │   ├── app.module.ts
 │   │   ├── app.controller.ts
 │   │   ├── app.service.ts
-│   │   └── main.ts                  # Application entry point
+│   │   └── main.ts
 │   │
 │   ├── prisma/
 │   │   ├── schema.prisma            # Database schema
-│   │   └── migrations/              # Migration history
+│   │   └── migrations/              # Versioned schema changes
 │   │
-│   ├── test/                        # E2E tests
-│   ├── generated/                   # Prisma generated files
-│   ├── dist/                        # Compiled output
-│   ├── compose.yaml                 # Docker Compose config
-│   ├── .env                         # Environment variables
+│   ├── generated/                  # Prisma generated client files
+│   ├── compose.yaml                # PostgreSQL + local dev stack
 │   ├── package.json
 │   ├── tsconfig.json
 │   └── nest-cli.json
 │
 ├── frontend/
 │   ├── src/
+│   │   ├── SignUp/
+│   │   ├── SignIn/
+│   │   ├── Dashboard/
+│   │   ├── Inbox/
 │   │   ├── components/
-│   │   │   ├── SignUp/
-│   │   │   │   ├── SignUp.tsx       # Registration form
-│   │   │   │   └── SignUp.css
-│   │   │   ├── SignIn/
-│   │   │   │   ├── SignIn.tsx       # Login form
-│   │   │   │   └── SignIn.css
-│   │   │   ├── Dashboard/
-│   │   │   │   ├── Dashboard.tsx    # Main dashboard
-│   │   │   │   └── Dashboard.css
-│   │   │   ├── Layout/              # Main layout
-│   │   │   ├── Sidebar/             # Navigation sidebar
-│   │   │   └── Modals/              # Reusable modals
-│   │   │
+│   │   │   ├── Wallets/
+│   │   │   ├── Layout/
+│   │   │   ├── Sidebar/
+│   │   │   └── Transaction/
 │   │   ├── routes/
-│   │   │   └── ProtectedRoutes.tsx  # Route protection
-│   │   │
-│   │   ├── data/                    # Static data (JSON)
-│   │   ├── assets/                  # Images, fonts
-│   │   ├── App.tsx                  # Root component
-│   │   ├── App.css
-│   │   ├── main.tsx                 # Entry point
-│   │   └── vite-env.d.ts
+│   │   ├── utils/
+│   │   ├── types/
+│   │   ├── App.tsx                  # Route setup and wallet provider
+│   │   ├── main.tsx                 # App entry point
+│   │   └── App.css
 │   │
-│   ├── .env                         # Environment variables
 │   ├── package.json
 │   ├── vite.config.ts
-│   ├── tsconfig.json
 │   └── index.html
 │
-└── package.json                     # Root package.json
+├── package.json                    # Root scripts
+├── README.md
+└── .gitignore
 ```
+
+This project is a full-stack banking app made of a NestJS API and a React frontend, with secure user authentication, encrypted wallet data, inbox notifications, and support for multi-currency personal account flows.
 
 ---
 
@@ -312,7 +334,15 @@ npm install
 cat > .env << EOF
 VITE_SIGNUP=http://localhost:3000/auth/signup
 VITE_SIGNIN=http://localhost:3000/auth/signin
-VITE_GET_USER=http://localhost:3000/auth/me
+VITE_ME=http://localhost:3000/auth/me
+VITE_DECRYPT=http://localhost:3000/encrypt/decrypt
+VITE_RECENT_TRANSACTIONS=http://localhost:3000/transfer/recent
+VITE_TRANSFER_IDENTITY=http://localhost:3000/transfer/identity
+VITE_TRANSFER=http://localhost:3000/transfer
+VITE_WALLET=http://localhost:3000/wallet
+VITE_WALLET_CREATE=http://localhost:3000/wallet/create
+VITE_INBOX_CATEGORIES=http://localhost:3000/inbox/categories
+VITE_INBOX_LETTER=http://localhost:3000/inbox/letter
 EOF
 ```
 
@@ -725,9 +755,32 @@ HASHING_PEPPER=your-hashing-pepper
 ### Frontend (.env)
 
 ```env
+## Frontend (.env)
+
+The frontend expects a set of VITE_ environment variables that point to the backend API endpoints. Example values (for local development):
+
+```env
+# Authentication
 VITE_SIGNUP=http://localhost:3000/auth/signup
 VITE_SIGNIN=http://localhost:3000/auth/signin
-VITE_GET_USER=http://localhost:3000/auth/me
+
+# User / dashboard
+VITE_ME=http://localhost:3000/auth/me
+VITE_DECRYPT=http://localhost:3000/encrypt/decrypt
+VITE_RECENT_TRANSACTIONS=http://localhost:3000/transfer/recent
+
+# Transfer
+VITE_TRANSFER_IDENTITY=http://localhost:3000/transfer/identity
+VITE_TRANSFER=http://localhost:3000/transfer
+
+# Wallets
+VITE_WALLET=http://localhost:3000/wallet
+VITE_WALLET_CREATE=http://localhost:3000/wallet/create
+
+# Inbox
+VITE_INBOX_CATEGORIES=http://localhost:3000/inbox/categories
+VITE_INBOX_LETTER=http://localhost:3000/inbox/letter
+```
 ```
 
 ⚠️ **IMPORTANT:** 
@@ -735,6 +788,14 @@ VITE_GET_USER=http://localhost:3000/auth/me
 - Create `.env.example` with dummy values
 - Use strong, random values in production
 - Change default credentials before deployment
+
+**Developer notes / discrepancies found**
+
+- The frontend code uses `VITE_ME`, `VITE_DECRYPT`, `VITE_RECENT_TRANSACTIONS`, `VITE_TRANSFER_IDENTITY`, `VITE_TRANSFER`, `VITE_WALLET`, `VITE_WALLET_CREATE`, `VITE_INBOX_CATEGORIES`, and `VITE_INBOX_LETTER` in addition to `VITE_SIGNUP` / `VITE_SIGNIN`. Make sure your local `.env` contains all of them (examples above).
+- The README previously listed `VITE_GET_USER` — actual frontend files expect `VITE_ME` (map to `/auth/me`).
+- The backend exposes `/encrypt/decrypt` for decrypting stored card numbers (used by the dashboard).
+- The frontend's `vite-env.d.ts` only declares a subset of these variables; consider adding the missing keys there for TypeScript completeness.
+
 
 ---
 

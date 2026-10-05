@@ -2,6 +2,7 @@ import './Dashboard.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import { faDollar } from '@fortawesome/free-solid-svg-icons'
+import { faEuroSign } from '@fortawesome/free-solid-svg-icons'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
@@ -21,7 +22,7 @@ import {
   Legend
 } from 'chart.js'
 import { Link, NavLink } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ExitModel from '../Modals/ExitModal/ExitModal'
 import  visaLogo  from '../image/visa-logo.png'
 import defaultUserLogo from '../image/default-user-logo.png'
@@ -33,6 +34,8 @@ import { formatCardNumber } from '../utils/cardFormatter'
 import { useDashboard } from '../utils/useDashboard'
 import { hiddenScroll } from '../utils/hiddenScroll'
 import { useSubmitTransfer } from '../utils/submitTransfer'
+import type { Transaction } from '../types/transaction.interface'
+import { UserWalletContext } from '../components/Wallets/userWallet.context'
 
 ChartJS.register(
   CategoryScale,
@@ -49,16 +52,20 @@ const Dashboard = () => {
   const [cardNumber, setCardNumber] = useState('');
   const [isExitModalOpen, setIsExitModalOpen] = useState<boolean>(false)
   const [isSendMoneyModalOpen, setIsSendMoneyModalOpen] = useState<boolean>(false)
-  const { userBankAccount, userRecentTransaction, refresh, userProfile } = useDashboard()
+  const { userRecentTransaction, refresh, userProfile } = useDashboard()
   const { handleCardNumberSubmit, process, error, resetMessages } = useSubmitTransfer(refresh)
-    
+  const { userWallet, refetchUserWallet } = useContext(UserWalletContext)
 
+  const userCurrency = userWallet?.currency === 'USD'    
+  const userBalance =  userWallet?.balance
+  
   hiddenScroll()
   
   useEffect(() => {
     if (!isSendMoneyModalOpen) {
       setCardNumber('')
       resetMessages()
+      setSumTransfer('')
     }
   }, [isSendMoneyModalOpen])
 
@@ -70,14 +77,16 @@ const Dashboard = () => {
   const handleExit = () => {
     localStorage.removeItem('accessToken')
   }
-
-  const handeSubmitTransfer = () => {
-    handleCardNumberSubmit(cardNumber, String(sumTransfer))
-
+ 
+  const handeSubmitTransfer = async () => {
+    await handleCardNumberSubmit(cardNumber, String(sumTransfer), userWallet?.currency)
+    await refetchUserWallet()
+   
   }
   
 
   return (
+
     <section className='dashboard'>
         <div className='personalUserInfo'>
           <FontAwesomeIcon icon={faBell} className='faBell'/>
@@ -116,9 +125,11 @@ const Dashboard = () => {
                           <p>Name</p>
                           <h4>{userProfile?.firstName} {userProfile?.surName}</h4>
                       </div>
-                         <p className='userCurrency'>{userProfile?.userWallet[0].currency}</p>
+                         <p className='userCurrency'>{userWallet?.currency}</p>
+
                     </div>  
-                    <p className='userCardNumber'>{userBankAccount}</p>
+                    <p className='userCardNumber'>{formatCardNumber(userWallet?.decryptCurrentCardNumber)}</p>
+
                 </div>
 
                 <div className='transfer'>
@@ -129,9 +140,12 @@ const Dashboard = () => {
                         <p className='bankName'>Visa Card</p>
                       </div>
                       <div className='currentSumOfTheCurrentBank'>
-                        <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollar'/>
+                        <p className='sumOfTheCurrentCard'>
+                          {userCurrency 
+                          ? <FontAwesomeIcon icon={faDollar} className='faDollar'/> 
+                          : <FontAwesomeIcon icon={faEuroSign} className='faDollar'/>}
                           {
-                userProfile?.userWallet[0].balance === undefined ? 0 : userProfile?.userWallet[0].balance
+                userBalance === undefined ? 0 : userBalance
 
                           }
                         </p>
@@ -147,7 +161,12 @@ const Dashboard = () => {
                     <p className='amountDesc'>Enter the amount</p>
                   </div>
                   <div className='enterTheAmountInInput'>
-                    <p className='sumOfTheCurrentCard'><FontAwesomeIcon icon={faDollar} className='faDollarInput'/></p>
+                    <p className='sumOfTheCurrentCard'>
+                      {userCurrency
+                      ?  <FontAwesomeIcon icon={faDollar} className='faDollarInput'/>
+                      :  <FontAwesomeIcon icon={faEuroSign} className='faDollarInput'/>
+                      }
+                     </p>
                     <input type="number"
                       className='amountOfTransfer'
                       placeholder='1000'
@@ -257,10 +276,13 @@ const Dashboard = () => {
                           {
                            typeof userRecentTransaction !== 'string'
                            ? 
-                           userRecentTransaction?.lastRecords.map((record: any) => { 
-                             const [date] = record.createdAt.split('T')
+                           userRecentTransaction?.map((record: Transaction) => { 
                             
-                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile})
+                           const currency = record.recipient?.currency 
+                            
+                            const [date] = record.createdAt.split('T')
+                            
+                            const {fullName, kindOfTransfer, amount} = TransactionHelper({record, userProfile, currency})
                             
                             return ( 
                           <>
@@ -288,6 +310,7 @@ const Dashboard = () => {
 
         </div>
     </section>
+
   )
 }
 

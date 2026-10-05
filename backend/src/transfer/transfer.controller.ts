@@ -1,10 +1,11 @@
 import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { TransferService } from './transfer.service';
 import { JwtGuard } from 'src/auth/guard/jwt-auth.guard';
-import { transferDto } from './dto/transfer.dto';
+import { transferIdentityDto } from './dto/transferIdentity.dto';
 import { GetUser } from 'src/auth/decorator/getUser';
 import { getUserDto } from 'src/auth/decorator/getUser.dto';
 import { LoggingInterceptor } from 'src/interceptor/logging.interceptor';
+import { transferDto } from './dto/transfer.dto';
 
 @Controller('transfer')
 export class TransferController {
@@ -15,6 +16,12 @@ export class TransferController {
   @Post('')
   async transfer(@Body() body: transferDto, @GetUser() user: getUserDto) {
     return this.transferService.transfer(body, user)
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('/identity')
+  async userIdentity(@Body() body: transferIdentityDto, @GetUser() user: getUserDto) {
+    return this.transferService.userIdentity(body, user)
   }
 
   @Get('/recent')
