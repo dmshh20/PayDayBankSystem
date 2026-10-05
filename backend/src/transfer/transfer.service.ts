@@ -15,7 +15,6 @@ export class TransferService {
 
     async transfer(body: transferDto, user: getUserDto) {
         try {
-        
             if (body.convertedSum < 1) {
                 throw new BadRequestException('Choose another sum of sending');
             }
@@ -29,7 +28,8 @@ export class TransferService {
 
                 const existingEnoughMoney = await tx.wallet.findFirst({
                     where: {
-                        userId: user.id
+                        userId: user.id,
+                        currency: body.currency
                     }
                 })
                 
