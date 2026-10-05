@@ -63,7 +63,12 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
                 'Content-Type': 'application/json'
                 }
             })
+          
             const newBalance = transferResponse.data.userSender.balance
+            
+            if (newBalance === undefined && newBalance === null) {
+                throw new Error('Choose another sum of sending')
+            }
             
             await refreshFromDashboard()
             setCurrentSumAccount(newBalance.toFixed(2) ?? 0)
@@ -71,10 +76,9 @@ export const useSubmitTransfer = (refreshFromDashboard: () => void) => {
             setProcess(transferResponse.data.message)
 
        } catch (error: unknown) {
-            if (error instanceof Error) {
-                setError('Choose another sum of sending')
-
-            }
+        if (axios.isAxiosError(error)) {
+            setError(error.response?.data.message)
+        }
        }
     }
   

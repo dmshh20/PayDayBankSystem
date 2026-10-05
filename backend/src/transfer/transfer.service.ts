@@ -14,11 +14,10 @@ export class TransferService {
     ) {}
 
     async transfer(body: transferDto, user: getUserDto) {
-        // console.log('body fields', body)
+        try {
         
             if (body.convertedSum < 1) {
-                return {message: 'Choose another sum of sending'}
-                // throw new BadRequestException('Choose another sum of sending');
+                throw new BadRequestException('Choose another sum of sending');
             }
 
            const recipientCurrency = body.recipientCurrency
@@ -66,6 +65,9 @@ export class TransferService {
                 
                 return {message: "Money was sent successfully", userSender, recipientCurrency}
             })
+             } catch(error) {
+                throw error
+        }
     }
 
     async userIdentity(body: transferIdentityDto, user: getUserDto) {
